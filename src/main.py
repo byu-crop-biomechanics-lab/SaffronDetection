@@ -190,10 +190,10 @@ class CameraColorApp(App):
                     self.amiga_tpdo1 = amiga_tpdo1
 
                     # Update the Label values as they are received
-                    self.amiga_state = AmigaControlState(amiga_tpdo1.state).name[6:]
+                    # self.amiga_state = AmigaControlState(amiga_tpdo1.state).name[6:]
                     
-                    self.amiga_speed = amiga_tpdo1.meas_speed
-                    self.amiga_rate = amiga_tpdo1.meas_ang_rate
+                    # self.amiga_speed = amiga_tpdo1.meas_speed
+                    # self.amiga_rate = amiga_tpdo1.meas_ang_rate
                     
                 # Check if message is for the gantry
                 gantry_tpdo1: Optional[GantryTpdo1] = parse_gantry_tpdo1_proto(proto)
