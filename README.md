@@ -1,9 +1,8 @@
-# amiga-app-template
+# Saffron Detection
 
-This repository is designed to streamline the creation of a new application deployable to the Amiga brain.
+This repository is for an app on the amiga. It can detect purple pom poms and access the OAK camera IMU data at the moment
 
-For the most up-to-date documentation on using this template repository, please refer to:
+stay tuned for cool stuff
 
-[amiga.farm-ng.com - **Developing Custom Applications**](https://amiga.farm-ng.com/docs/brain/brain-apps)
 
 ---
