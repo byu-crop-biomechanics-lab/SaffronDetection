@@ -20,7 +20,6 @@ from farm_ng.canbus.packet import Packet
 from farm_ng.canbus.packet import SDK_NODE_ID
 
 
-
 # feed rate, x position, y position
 
 
@@ -36,8 +35,8 @@ class GantryControlState:
     STATE_ESTOPPED = 6
     
 
-def make_gantry_rpdo1_proto(
-    R_x: int, R_y: int
+def make_gantry_tpdo1_proto(
+    T_x: int, T_y: int
     ) -> canbus_pb2.RawCanbusMessage:
     """Creates a canbus_pb2.RawCanbusMessage.
 
@@ -57,10 +56,10 @@ def make_gantry_rpdo1_proto(
     """
     # TODO: add some checkers, or make python CHECK_API
     return canbus_pb2.RawCanbusMessage(
-        id=GantryRpdo1.cob_id + SDK_NODE_ID,
-        data=GantryRpdo1(
-            R_x=R_x,
-            R_y=R_y,
+        id=GantryTpdo1.cob_id + SDK_NODE_ID,
+        data=GantryTpdo1(
+            T_x=T_x,
+            T_y=T_y,
             ).encode(),
     )
     
@@ -148,10 +147,10 @@ class GantryTpdo1(Packet):
             self.T_x, self.T_y, self.stamp)
 #/////////////
     
-def parse_gantry_tpdo1_proto(message: canbus_pb2.RawCanbusMessage) -> GantryTpdo1 | None:
+def parse_gantry_rpdo1_proto(message: canbus_pb2.RawCanbusMessage) -> GantryRpdo1 | None:
     #Parses a canbus_pb2.RawCanbusMessage.
 
-    if message.id != GantryTpdo1.cob_id + SDK_NODE_ID:
+    if message.id != GantryRpdo1.cob_id + SDK_NODE_ID:
         return None
-    return GantryTpdo1.from_can_data(message.data, stamp=message.stamp)
+    return GantryRpdo1.from_can_data(message.data, stamp=message.stamp)
 

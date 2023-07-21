@@ -43,9 +43,9 @@ import turbojpeg
 
 # things I've added #
 from gantry import GantryControlState
-from gantry import GantryTpdo1
-from gantry import make_gantry_rpdo1_proto
-from gantry import parse_gantry_tpdo1_proto
+from gantry import GantryRpdo1
+from gantry import make_gantry_tpdo1_proto
+from gantry import parse_gantry_rpdo1_proto
 
 import cv2
 import numpy as np
@@ -76,12 +76,12 @@ class CameraColorApp(App):
         self.canbus_port: int = canbus_port
         self.stream_every_n = stream_every_n
         
-        self.amiga_tpdo1: AmigaTpdo1 = AmigaTpdo1()
+        self.amiga_rpdo1: AmigaTpdo1 = AmigaTpdo1()
         self.amiga_state = AmigaControlState.STATE_AUTO_READY
         self.amiga_rate = 0
         self.amiga_speed = 0
         
-        self.gantry_tpdo1: GantryTpdo1 = GantryTpdo1()
+        self.gantry_rpdo1: GantryRpdo1 = GantryRpdo1()
         self.gantry_state = GantryControlState.STATE_AUTO_READY
         self.gantry_x = 0
         self.gantry_y = 0
@@ -196,16 +196,16 @@ class CameraColorApp(App):
                     # self.amiga_rate = amiga_tpdo1.meas_ang_rate
                     
                 # Check if message is for the gantry
-                gantry_tpdo1: Optional[GantryTpdo1] = parse_gantry_tpdo1_proto(proto)
-                if gantry_tpdo1:
+                gantry_rpdo1: Optional[GantryRpdo1] = parse_gantry_rpdo1_proto(proto)
+                if gantry_rpdo1:
                     # Store the value for possible other uses
-                    self.gantry_tpdo1 = gantry_tpdo1
+                    self.gantry_tpdo1 = gantry_rpdo1
                     
                     # Update the Label values as they are received
                     # self.gantry_state = self.amiga_state
                     # self.gantry_feed = gantry_tpdo1.meas_feed
-                    self.gantry_x = gantry_tpdo1.T_x
-                    self.gantry_y = gantry_tpdo1.T_y
+                    # self.gantry_x = gantry_rpdo1.T_x
+                    # self.gantry_y = gantry_rpdo1.T_y
                     # self.gantry_jog = gantry_tpdo1.jog
                     
 
@@ -356,19 +356,18 @@ class CameraColorApp(App):
 
             await asyncio.sleep(0.1)
 
-#// this is where you will determine whether or not to move the gantry based on the purple color sent.
+# this is where you will determine whether or not to move the gantry based on the purple color sent.
     async def pose_generator(self, period: float = 0.02):
-        """The pose generator yields an AmigaRpdo1 (auto control command) for the canbus client to send on the bus
-        at the specified period (recommended 50hz) based on the onscreen joystick position."""
+
         while self.root is None:
             await asyncio.sleep(0.01)
-        #// put the x and y coordinate and feed stuff right here
+        # put the x and y coordinate and feed stuff right here
         while True:
-            msg: canbus_pb2.RawCanbusMessage = make_gantry_rpdo1_proto(
+            msg: canbus_pb2.RawCanbusMessage = make_gantry_tpdo1_proto(
                 state_req = GantryControlState.STATE_AUTO_ACTIVE,
                 # cmd_feed = self.gantry_feed,
-                R_x = self.gantry_x,
-                R_y = self.gantry_y,
+                T_x = self.gantry_x,
+                T_y = self.gantry_y,
                 # jog = self.gantry_jog
             )
             yield canbus_pb2.SendCanbusMessageRequest(message=msg)
