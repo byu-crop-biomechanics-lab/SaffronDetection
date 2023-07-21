@@ -44,8 +44,9 @@ import turbojpeg
 # things I've added #
 from gantry import GantryControlState
 from gantry import GantryRpdo1
-from gantry import make_gantry_tpdo1_proto
-from gantry import parse_gantry_rpdo1_proto
+from gantry import GantryTpdo1
+from gantry import make_gantry_rpdo1_proto
+from gantry import parse_gantry_tpdo1_proto
 
 import cv2
 import numpy as np
@@ -81,6 +82,7 @@ class CameraColorApp(App):
         self.amiga_rate = 0
         self.amiga_speed = 0
         
+        self.gantry_tpdo1: GantryTpdo1 = GantryTpdo1()
         self.gantry_rpdo1: GantryRpdo1 = GantryRpdo1()
         self.gantry_state = GantryControlState.STATE_AUTO_READY
         self.gantry_x = 0
@@ -199,10 +201,10 @@ class CameraColorApp(App):
                     # self.amiga_rate = amiga_tpdo1.meas_ang_rate
                     
                 # Check if message is for the gantry
-                gantry_rpdo1: Optional[GantryRpdo1] = parse_gantry_rpdo1_proto(proto)
-                if gantry_rpdo1:
+                gantry_tpdo1: Optional[GantryTpdo1] = parse_gantry_tpdo1_proto(proto)
+                if gantry_tpdo1:
                     # Store the value for possible other uses
-                    self.gantry_tpdo1 = gantry_rpdo1
+                    self.gantry_tpdo1 = gantry_tpdo1
                     
                     # Update the Label values as they are received
                     # self.gantry_state = self.amiga_state
@@ -369,7 +371,7 @@ class CameraColorApp(App):
             await asyncio.sleep(0.01)
         # put the x and y coordinate and feed stuff right here
         while True:
-            msg: canbus_pb2.RawCanbusMessage = make_gantry_tpdo1_proto(
+            msg: canbus_pb2.RawCanbusMessage = make_gantry_rpdo1_proto(
                 state_req = GantryControlState.STATE_AUTO_ACTIVE,
                 # cmd_feed = self.gantry_feed,
                 T_x = self.gantry_x,
