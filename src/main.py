@@ -87,6 +87,8 @@ class CameraColorApp(App):
         self.gantry_y = 0
         self.gantry_feed = 1000
         self.gantry_jog = 1
+        self.sender = 0
+        self.receiver = 0
 
         self.image_decoder = turbojpeg.TurboJPEG()
         
@@ -170,6 +172,7 @@ class CameraColorApp(App):
             ):
                 # get the streaming object
                 response_stream = client.stream_raw()
+                self.receiver = self.receiver + 1
                 # pass
 
             try:
@@ -296,6 +299,7 @@ class CameraColorApp(App):
                             cv2.circle(frame, (cX, cY), 5, (255, 255, 255), -1)
                         # cv2.putText(purple_result, "centroid", (cX - 25, cY - 25),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
                         #######
+                        cv2.putText(img, "sent: " + str(self.sender),(200,200),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
                         img = frame
                         
                         #///////////////////////////////////////////////////
@@ -338,6 +342,7 @@ class CameraColorApp(App):
 
             if response_stream is None:
                 print("Start sending CAN messages")
+                self.sender = self.sender + 1
                 response_stream = client.stub.sendCanbusMessage(self.pose_generator())
 
             '''
