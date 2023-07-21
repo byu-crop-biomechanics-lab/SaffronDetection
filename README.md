@@ -1,9 +1,5 @@
-# amiga-app-template
+# Saffron Detection
 
-This repository is designed to streamline the creation of a new application deployable to the Amiga brain.
-
-For the most up-to-date documentation on using this template repository, please refer to:
-
-[amiga.farm-ng.com - **Developing Custom Applications**](https://amiga.farm-ng.com/docs/brain/brain-apps)
+This branch is to send and receive canbus messages so the microcontroller can send commands to the gantry. Not working quite yet
 
 ---
