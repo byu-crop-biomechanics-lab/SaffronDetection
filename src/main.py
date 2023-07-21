@@ -300,7 +300,7 @@ class CameraColorApp(App):
                         # cv2.putText(purple_result, "centroid", (cX - 25, cY - 25),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
                         #######
                         img = frame
-                        cv2.putText(img, "sent: " + str(self.sender),(200,200),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+                        cv2.putText(img, "sent: " + str(self.sender),(500,500),cv2.FONT_HERSHEY_SIMPLEX, 3, (255, 255, 255), 2)
                         
                         
                         #///////////////////////////////////////////////////
