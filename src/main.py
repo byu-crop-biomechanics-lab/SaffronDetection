@@ -202,11 +202,11 @@ class CameraColorApp(App):
                     self.gantry_tpdo1 = gantry_tpdo1
                     
                     # Update the Label values as they are received
-                    self.gantry_state = self.amiga_state
-                    self.gantry_feed = gantry_tpdo1.meas_feed
-                    self.gantry_x = gantry_tpdo1.meas_x
-                    self.gantry_y = gantry_tpdo1.meas_y
-                    self.gantry_jog = gantry_tpdo1.jog
+                    # self.gantry_state = self.amiga_state
+                    # self.gantry_feed = gantry_tpdo1.meas_feed
+                    self.gantry_x = gantry_tpdo1.T_x
+                    self.gantry_y = gantry_tpdo1.T_y
+                    # self.gantry_jog = gantry_tpdo1.jog
                     
 
     async def stream_camera(self, client: OakCameraClient) -> None:
@@ -366,10 +366,10 @@ class CameraColorApp(App):
         while True:
             msg: canbus_pb2.RawCanbusMessage = make_gantry_rpdo1_proto(
                 state_req = GantryControlState.STATE_AUTO_ACTIVE,
-                cmd_feed = self.gantry_feed,
-                cmd_x = self.gantry_x,
-                cmd_y = self.gantry_y,
-                jog = self.gantry_jog
+                # cmd_feed = self.gantry_feed,
+                R_x = self.gantry_x,
+                R_y = self.gantry_y,
+                # jog = self.gantry_jog
             )
             yield canbus_pb2.SendCanbusMessageRequest(message=msg)
             await asyncio.sleep(period)

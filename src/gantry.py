@@ -17,10 +17,10 @@ from farm_ng.canbus import canbus_pb2
 
 # things I've included
 from farm_ng.canbus.packet import Packet
+from farm_ng.canbus.packet import SDK_NODE_ID
 
 
 
-GANTRY_ID = 0x12
 # feed rate, x position, y position
 
 
@@ -36,7 +36,8 @@ class GantryControlState:
     STATE_ESTOPPED = 6
     
 
-def make_gantry_rpdo1_proto(R_y: int, R_x: int
+def make_gantry_rpdo1_proto(
+    R_x: int, R_y: int
     ) -> canbus_pb2.RawCanbusMessage:
     """Creates a canbus_pb2.RawCanbusMessage.
 
@@ -56,7 +57,7 @@ def make_gantry_rpdo1_proto(R_y: int, R_x: int
     """
     # TODO: add some checkers, or make python CHECK_API
     return canbus_pb2.RawCanbusMessage(
-        id=GantryRpdo1.cob_id + GANTRY_ID,
+        id=GantryRpdo1.cob_id + SDK_NODE_ID,
         data=GantryRpdo1(
             R_x=R_x,
             R_y=R_y,
@@ -64,7 +65,9 @@ def make_gantry_rpdo1_proto(R_y: int, R_x: int
     )
     
 #/////////////
+#/////////////
 class GantryRpdo1(Packet):
+    #State, feed, location sent to the Amiga vehicle control unit (VCU).
     #State, feed, location sent to the Amiga vehicle control unit (VCU).
     
 
@@ -114,7 +117,7 @@ class GantryTpdo1(Packet):
 
     def __init__(
         self,
-        T_state: GantryControlState = GantryControlState.STATE_ESTOPPED,
+        T_state: GantryControlState = GantryControlState.STATE_AUTO_ACTIVE,
         T_x: int = 0,
         T_y: int = 0,
     ):
@@ -148,7 +151,7 @@ class GantryTpdo1(Packet):
 def parse_gantry_tpdo1_proto(message: canbus_pb2.RawCanbusMessage) -> GantryTpdo1 | None:
     #Parses a canbus_pb2.RawCanbusMessage.
 
-    if message.id != GantryTpdo1.cob_id + GANTRY_ID:
+    if message.id != GantryTpdo1.cob_id + SDK_NODE_ID:
         return None
     return GantryTpdo1.from_can_data(message.data, stamp=message.stamp)
 
