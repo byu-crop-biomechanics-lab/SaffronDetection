@@ -1,5 +1,5 @@
 # Saffron Detection
 
-This branch is to send and receive canbus messages so the microcontroller can send commands to the gantry. Not working quite yet
+This repository is for an app on the amiga. It can detect purple pom poms and access the OAK camera IMU data at the moment
 
----
+stay tuned for cool stuff
