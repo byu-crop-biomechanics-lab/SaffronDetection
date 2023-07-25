@@ -84,8 +84,8 @@ class CameraColorApp(App):
         self.gantry_tpdo1: GantryTpdo1 = GantryTpdo1()
         self.gantry_rpdo1: GantryRpdo1 = GantryRpdo1()
         self.gantry_state = GantryControlState.STATE_AUTO_READY
-        self.gantry_x = 0
-        self.gantry_y = 0
+        self.gantry_x = 5
+        self.gantry_y = 5
         self.gantry_feed = 1000
         self.gantry_jog = 1
         self.sender = 0
