@@ -263,7 +263,7 @@ class CameraColorApp(App):
                     
                     if view_name == "data":
                         
-                        img = np.zeros((500, 500, 3), dtype = np.uint8)
+                        img = np.zeros((500, 500, 3), np.uint8)
 
                         # img = self.image_decoder.decode(
                         #     getattr(frame, "rgb").image_data
