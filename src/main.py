@@ -265,9 +265,9 @@ class CameraColorApp(App):
                         
                         img = np.zeros((500, 500, 3), np.uint8)
 
-                        # img = self.image_decoder.decode(
-                        #     getattr(frame, "rgb").image_data
-                        # )
+                        img = self.image_decoder.decode(
+                            getattr(frame, 'rgb').image_data
+                        )
                         
                         # imu_packet = getattr(frame, 'imu_packets').packets[0]
                         
@@ -291,7 +291,7 @@ class CameraColorApp(App):
                         
                         
                     #----------rgb and purple filtering----------#
-                    if view_name == 'rgb':
+                    elif view_name == 'rgb':
                         img = self.image_decoder.decode(
                             getattr(frame, view_name).image_data
                         )
@@ -387,6 +387,7 @@ class CameraColorApp(App):
                         bufferfmt="ubyte",
                         mipmap_generation=False,
                     )
+                    
                     self.root.ids[view_name].texture = texture
 
                 except Exception as e:
