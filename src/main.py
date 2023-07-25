@@ -204,6 +204,7 @@ class CameraColorApp(App):
                 if gantry_tpdo1:
                     # Store the value for possible other uses
                     self.gantry_tpdo1 = gantry_tpdo1
+                    print("Received some TPDO1")
                     
                     # Update the Label values as they are received
                     # self.gantry_state = self.amiga_state
@@ -280,7 +281,7 @@ class CameraColorApp(App):
                         acc_y = imu_packet.accelero_packet.accelero.y
                         acc_z = imu_packet.accelero_packet.accelero.z
                         
-                        cv2.putText(img, "IMU packet things:",(100,200),cv2.FONT_HERSHEY_SIMPLEX,1.5,(255,255,255),2)
+                        cv2.putText(img, "IMU packet things:",(30,200),cv2.FONT_HERSHEY_SIMPLEX,1.5,(255,255,255),2)
                         cv2.putText(img, 'G X: %.4s' % str(imu_x),(350,250),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
                         cv2.putText(img, 'G Y: %.4s' % str(imu_y),(350,300),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
                         cv2.putText(img, 'G Z: %.4s' % str(imu_z),(350,350),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
@@ -345,17 +346,7 @@ class CameraColorApp(App):
                             text = "Center: " + str(disparity_img[cX][cY])
                             cv2.putText(img, text, (cX - 25, cY - 25),cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
                         #-----#
-                        
 
-                        
-                        # cv2.putText(img, str(rgb_size),(300,200),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
-
-                        
-                        
-
-
-
-                        
                     elif view_name == "disparity":
                         
                         img = self.image_decoder.decode(
@@ -449,6 +440,7 @@ class CameraColorApp(App):
                 T_y = self.gantry_y,
                 # jog = self.gantry_jog
             )
+            print("Sent RPDO")
             yield canbus_pb2.SendCanbusMessageRequest(message=msg)
             await asyncio.sleep(period)
 
