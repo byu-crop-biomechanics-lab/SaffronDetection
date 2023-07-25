@@ -268,6 +268,7 @@ class CameraColorApp(App):
                         img = self.image_decoder.decode(
                             getattr(frame, 'rgb').image_data
                         )
+                        img[:][:][:] = 0
                         
                         # imu_packet = getattr(frame, 'imu_packets').packets[0]
                         
