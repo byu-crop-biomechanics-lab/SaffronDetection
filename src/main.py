@@ -269,8 +269,9 @@ class CameraColorApp(App):
                         cv2.putText(img, 'X: %.4s' %str(self.gantry_x),(600,250),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
                         cv2.putText(img, 'Y: %.4s' %str(self.gantry_y),(600,300),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
                         
-                        # meta_data = getattr(frame, 'rgb').meta.category
-                        # cv2.putText(img, 'meta: %.4s' %str(meta_data),(30,600),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)                        
+                        
+                        meta_data = getattr(frame, 'rgb').meta.category
+                        cv2.putText(img, 'meta: %.4s' %str(meta_data),(30,600),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)                        
                         
                         
                     # color filtering based on hue
