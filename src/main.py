@@ -84,8 +84,8 @@ class CameraColorApp(App):
         self.gantry_tpdo1: GantryTpdo1 = GantryTpdo1()
         self.gantry_rpdo1: GantryRpdo1 = GantryRpdo1()
         self.gantry_state = GantryControlState.STATE_AUTO_READY
-        self.gantry_x = 5
-        self.gantry_y = 5
+        self.gantry_x = 0
+        self.gantry_y = 0
         self.gantry_feed = 1000
         self.gantry_jog = 1
         self.sender = 0
@@ -433,6 +433,7 @@ class CameraColorApp(App):
             await asyncio.sleep(0.01)
         # put the x and y coordinate and feed stuff right here
         while True:
+            self.gantry_x = self.gantry_x + 1
             msg: canbus_pb2.RawCanbusMessage = make_gantry_tpdo1_proto(
                 # state_req = GantryControlState.STATE_AUTO_ACTIVE,
                 # cmd_feed = self.gantry_feed,
@@ -443,7 +444,7 @@ class CameraColorApp(App):
             print("Sent TPDO")
             yield canbus_pb2.SendCanbusMessageRequest(message=msg)
             await asyncio.sleep(period)
-
+            
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="color-detector-oak")
     parser.add_argument(
