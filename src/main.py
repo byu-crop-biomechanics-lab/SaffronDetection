@@ -92,10 +92,10 @@ class CameraColorApp(App):
         """Kills the running kivy application."""
         App.get_running_app().stop()
         
-    def on_home_btn(self) -> None:
-        # home the gantry
-        # maybe a variable to say home, Go1, jog, or alarm states
-        pass
+    # def on_home_btn(self) -> None:
+    #     # home the gantry
+    #     # maybe a variable to say home, Go1, jog, or alarm states
+    #     pass
 
     async def app_func(self):
         async def run_wrapper():
