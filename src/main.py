@@ -263,9 +263,11 @@ class CameraColorApp(App):
                     
                     if view_name == "data":
                         
-                        img = self.image_decoder.decode(
-                            getattr(frame, "rgb").image_data
-                        )
+                        img = np.zeros((frame_x, frame_y, 3), dtype = np.uint8)
+
+                        # img = self.image_decoder.decode(
+                        #     getattr(frame, "rgb").image_data
+                        # )
                         
                         # imu_packet = getattr(frame, 'imu_packets').packets[0]
                         
@@ -277,7 +279,7 @@ class CameraColorApp(App):
                         # acc_y = imu_packet.accelero_packet.accelero.y
                         # acc_z = imu_packet.accelero_packet.accelero.z
                         
-                        # # img = np.zeros((frame_x, frame_y, 3), dtype = np.uint8)
+                        
                         
                         # cv2.putText(img, 'G X: %.4s' % str(imu_x),(350,200),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
                         # cv2.putText(img, 'G Y: %.4s' % str(imu_y),(350,250),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
