@@ -286,7 +286,7 @@ class CameraColorApp(App):
                         
                         cv2.putText(img, 'Gantry things',(600,200),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
                         cv2.putText(img, 'X: %.4s' %str(self.gantry_x),(600,250),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
-                        cv2.putText(img, 'Y: %.4s' %str(self.gantry_y),(600,250),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
+                        cv2.putText(img, 'Y: %.4s' %str(self.gantry_y),(600,300),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
                         
                         
                     #----------rgb and purple filtering----------#
