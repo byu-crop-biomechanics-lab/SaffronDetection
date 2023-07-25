@@ -82,7 +82,7 @@ class GantryRpdo1(Packet):
         self.R_x = R_x
         self.R_y = R_y
 
-        self.stamp()
+        self.stamp_packet(time.monotonic())
 
     def encode(self):
         """Returns the data contained by the class encoded as CAN message data."""
@@ -124,7 +124,7 @@ class GantryTpdo1(Packet):
         self.T_x = T_x
         self.T_y = T_y
 
-        self.stamp()
+        self.stamp_packet(time.monotonic())
 
     def encode(self):
         """Returns the data contained by the class encoded as CAN message data."""
@@ -141,8 +141,8 @@ class GantryTpdo1(Packet):
 
 
     def __str__(self):
-        return "Gantry Tpdo1 T_state {} T x {:x} T y{:x} @ time {}".format(
-            self.T_x, self.T_y, self.stamp)
+        return "Gantry Tpdo1 T_state {} T x {:x} T y{:x}".format(
+            self.T_x, self.T_y)
 #/////////////
     
 def parse_gantry_tpdo1_proto(message: canbus_pb2.RawCanbusMessage) -> GantryTpdo1 | None:
