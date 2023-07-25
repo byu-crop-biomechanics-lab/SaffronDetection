@@ -206,12 +206,6 @@ class CameraColorApp(App):
                     self.gantry_rpdo1 = gantry_rpdo1
                     print("Received some RPDO1")
                     
-                    # Update the Label values as they are received
-                    # self.gantry_state = self.amiga_state
-                    # self.gantry_feed = gantry_tpdo1.meas_feed
-                    # self.gantry_x = gantry_rpdo1.T_x
-                    # self.gantry_y = gantry_rpdo1.T_y
-                    # self.gantry_jog = gantry_tpdo1.jog
                     
 
     async def stream_camera(self, client: OakCameraClient) -> None:
@@ -289,6 +283,10 @@ class CameraColorApp(App):
                         cv2.putText(img, 'A X: %.4s' % str(acc_x),(30,250),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
                         cv2.putText(img, 'A Y: %.4s' % str(acc_y),(30,300),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
                         cv2.putText(img, 'A Z: %.4s' % str(acc_z),(30,350),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
+                        
+                        cv2.putText(img, 'Gantry things',(600,200),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
+                        cv2.putText(img, 'X: %.4s' %str(self.gantry_x),(600,250),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
+                        cv2.putText(img, 'Y: %.4s' %str(self.gantry_y),(600,250),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
                         
                         
                     #----------rgb and purple filtering----------#
