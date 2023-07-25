@@ -1,19 +1,9 @@
-# Copyright (c) farm-ng, inc.
-#
-# Licensed under the Amiga Development Kit License (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     https://github.com/farm-ng/amiga-dev-kit/blob/main/LICENSE
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-# To do:
-# was trying to merge control and new imu data screen. comment out camera and canbus individually to check what's wrong
+'''
+To do:
+    Now that we can send to the microcontroller, send gantry commands from amiga to gantry
+    Await for a response from gantry to be send before new command is sent from the brain
+    have a home button that when pressed the gantry homes only once
+''' 
 
 
 import argparse
@@ -101,6 +91,11 @@ class CameraColorApp(App):
     def on_exit_btn(self) -> None:
         """Kills the running kivy application."""
         App.get_running_app().stop()
+        
+    def on_home_btn(self) -> None:
+        # home the gantry
+        # maybe a variable to say home, Go1, jog, or alarm states
+        pass
 
     async def app_func(self):
         async def run_wrapper():
@@ -173,8 +168,6 @@ class CameraColorApp(App):
             ):
                 # get the streaming object
                 response_stream = client.stream_raw()
-                # self.receiver = self.receiver + 1
-                # pass
 
             try:
                 # try/except so app doesn't crash on killed service
@@ -186,28 +179,14 @@ class CameraColorApp(App):
                 response_stream = None
                 continue
 
-            for proto in response.messages.messages:
-                # Check if message is for the dashboard
-                # amiga_tpdo1: Optional[AmigaTpdo1] = parse_amiga_tpdo1_proto(proto)
-                # if amiga_tpdo1:
-                    # # Store the value for possible other uses
-                    # self.amiga_tpdo1 = amiga_tpdo1
-
-                    # Update the Label values as they are received
-                    # self.amiga_state = AmigaControlState(amiga_tpdo1.state).name[6:]
-                    
-                    # self.amiga_speed = amiga_tpdo1.meas_speed
-                    # self.amiga_rate = amiga_tpdo1.meas_ang_rate
-                    
+            for proto in response.messages.messages:                    
                 # Check if message is for the gantry
                 gantry_rpdo1: Optional[GantryRpdo1] = parse_gantry_rpdo1_proto(proto)
                 if gantry_rpdo1:
                     # Store the value for possible other uses
                     self.gantry_rpdo1 = gantry_rpdo1
-                    print("Received some RPDO1")
+                    # print("Received some RPDO1")
                     
-                    
-
     async def stream_camera(self, client: OakCameraClient) -> None:
         """This task listens to the camera client's stream and populates the tabbed panel with all 4 image streams
         from the oak camera."""
@@ -248,18 +227,20 @@ class CameraColorApp(App):
 
             # get the sync frame
             frame: oak_pb2.OakSyncFrame = response.frame
-            frame_x = 1920
-            frame_y = 1080
+
+
+            #--------Code added here--------#
+            
+            
             # get image and show
             for view_name in ["data", "rgb", "disparity", "left", "right"]:
                 # Skip if view_name was not included in frame
                 try:
                     # Decode the image and render it in the correct kivy texture
                     
+                    # Data was added by me to show us debugging and useful information
                     if view_name == "data":
                         
-                        # img = np.zeros((500, 500, 3), np.uint8)
-
                         img = self.image_decoder.decode(
                             getattr(frame, 'rgb').image_data
                         )
@@ -288,14 +269,11 @@ class CameraColorApp(App):
                         cv2.putText(img, 'X: %.4s' %str(self.gantry_x),(600,250),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
                         cv2.putText(img, 'Y: %.4s' %str(self.gantry_y),(600,300),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
                         
-                        
-                    #----------rgb and purple filtering----------#
+                    # color filtering based on hue
                     elif view_name == 'rgb':
                         img = self.image_decoder.decode(
                             getattr(frame, view_name).image_data
-                        )
-                        ################################################
-                                                
+                        )                                                
                         img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
                         purple_lower = np.array([120,70,50])
@@ -304,67 +282,48 @@ class CameraColorApp(App):
                         purple_full_mask = cv2.inRange(img, purple_lower, purple_upper)
                         rgb_size = (img.shape[1],img.shape[0])                        
                         
-                        #//////////// calculate the middle of all purple, set gantry_x and gantry_y to location of blob center
-                        # calculate moments of binary image
+                        # calculate center of purple object
                         cX = None
                         cY = None
                         if np.count_nonzero(purple_full_mask) >= purple_amount:
                             ret,thresh = cv2.threshold(purple_full_mask,127,255,0)
         
-                            # calculate moments of binary image
                             M = cv2.moments(thresh)
                             
-                            # calculate x,y coordinate of center
                             cX = int(M["m10"] / M["m00"])
                             cY = int(M["m01"] / M["m00"])
-                        #////////////
-                        
                         
                         img = cv2.bitwise_and(img, img, mask=purple_full_mask)
                         img = cv2.cvtColor(img,cv2.COLOR_HSV2BGR) 
                         
-                        
-                        # #######
-                        # # put text and highlight the center
+                        # put text and highlight the center
                         if cX and cY:
                             cv2.circle(img, (cX, cY), 5, (255, 255, 255), -1)
                             # text = "centroid: " + str(cX) + " " + str(cY)
                             # cv2.putText(img, text, (cX - 25, cY - 25),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
-                        # #######    
                         
                         disparity_img = self.image_decoder.decode(
                             getattr(frame, "disparity").image_data
                         )
                         disparity_img = cv2.resize(disparity_img,(img.shape[1], img.shape[0]))
-                        # #-----#
-                        # # put text and highlight the center
+                        
+                        '''
+                        # this is to show what the disparity image shows us at the location of the pom pom
                         if cX and cY:
 
                             cv2.circle(img, (cX, cY), 5, (255, 255, 255), -1)
                             text = "Center: " + str(disparity_img[cX][cY])
                             cv2.putText(img, text, (cX - 25, cY - 25),cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
-                        #-----#
+                        '''
 
-                    elif view_name == "disparity":
-                        
-                        img = self.image_decoder.decode(
-                            getattr(frame, "disparity").image_data
-                        )
-                        img = cv2.resize(img,rgb_size)
-                        # if cX and cY:
-                            # text = "Distance: " + str(img[cY])
-                            # cv2.circle(frame, (cX, cY), 5, (255, 255, 255), -1)
-                            # cv2.putText(img, text, (cX - 25, cY - 25),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
                     else:
                         img = self.image_decoder.decode(
                             getattr(frame, view_name).image_data
                         )
-                        
-                        
 
-                        
-                        
+
                     #----------end of my custom code----------#
+                    
                     
                     texture = Texture.create(
                         size=(img.shape[1], img.shape[0]), icolorfmt="bgr"
@@ -437,7 +396,6 @@ class CameraColorApp(App):
                 # cmd_feed = self.gantry_feed,
                 T_x = self.gantry_x,
                 T_y = self.gantry_y,
-                # jog = self.gantry_jog
             )
             print("Sent TPDO")
             yield canbus_pb2.SendCanbusMessageRequest(message=msg)
