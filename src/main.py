@@ -13,8 +13,7 @@
 # limitations under the License.
 
 # To do:
-# get all of the Tpdo and Rpdo good. Draw a diagram please so you get it right
-# get the depth and color cameras working in sync
+# was trying to merge control and new imu data screen. comment out camera and canbus individually to check what's wrong
 
 
 import argparse
@@ -124,17 +123,17 @@ class CameraColorApp(App):
         canbus_client: CanbusClient = CanbusClient(canbus_config)
 
         # Camera task(s)
-        self.tasks.append(
-            asyncio.ensure_future(self.stream_camera(camera_client))
-        )
+        # self.tasks.append(
+        #     asyncio.ensure_future(self.stream_camera(camera_client))
+        # )
 
-        # Canbus task(s)
-        self.tasks.append(
-            asyncio.ensure_future(self.stream_canbus(canbus_client))
-        )
-        self.tasks.append(
-            asyncio.ensure_future(self.send_can_msgs(canbus_client))
-        )
+        # # Canbus task(s)
+        # self.tasks.append(
+        #     asyncio.ensure_future(self.stream_canbus(canbus_client))
+        # )
+        # self.tasks.append(
+        #     asyncio.ensure_future(self.send_can_msgs(canbus_client))
+        # )
 
 
         return await asyncio.gather(run_wrapper(), *self.tasks)
