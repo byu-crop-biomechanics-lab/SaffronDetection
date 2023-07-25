@@ -280,7 +280,7 @@ class CameraColorApp(App):
                         acc_y = imu_packet.accelero_packet.accelero.y
                         acc_z = imu_packet.accelero_packet.accelero.z
                         
-                        cv2.putText(img, "IMU packet things:",(100,200),cv2.FONT_HERSHEY_SIMPLEX,2,(255,255,255),2)
+                        cv2.putText(img, "IMU packet things:",(100,200),cv2.FONT_HERSHEY_SIMPLEX,1.5,(255,255,255),2)
                         cv2.putText(img, 'G X: %.4s' % str(imu_x),(350,250),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
                         cv2.putText(img, 'G Y: %.4s' % str(imu_y),(350,300),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
                         cv2.putText(img, 'G Z: %.4s' % str(imu_z),(350,350),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
