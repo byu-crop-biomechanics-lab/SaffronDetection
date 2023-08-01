@@ -13,10 +13,12 @@ import asyncio
 def createPipeline():
     # Start defining a pipeline
     pipeline = dai.Pipeline()
+    
     # Define a source - color camera
     camRgb = pipeline.create(dai.node.ColorCamera)
 
-    camRgb.setPreviewSize(300, 300)
+    # Properties
+    camRgb.setVideoSize(1920, 1080)
     camRgb.setBoardSocket(dai.CameraBoardSocket.CAM_A)
     camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_1080_P)
     camRgb.setInterleaved(False)
@@ -72,7 +74,7 @@ class Oak_system:
             usbSpeed = dai.UsbSpeed.SUPER
             openVinoVersion = dai.OpenVINO.Version.VERSION_2021_4
             
-            self.qRgbMap = []
+            self.streams = []
             self.devices = []
             
         for deviceInfo in self.deviceInfos:
@@ -94,11 +96,12 @@ class Oak_system:
 
             pipeline = createPipeline()
             device.startPipeline(pipeline)
+            video = device.getOutputQueue(name = "video", maxSize = 4, blocking = False)
 
-            # Output queue will be used to get the rgb frames from the output defined above
-            q_rgb = device.getOutputQueue(name="rgb", maxSize=4, blocking=False)
-            stream_name = "rgb-" + mxId + "-" + eepromData.productName
-            self.qRgbMap.append((q_rgb, stream_name))
-            
+            # # Output queue will be used to get the rgb frames from the output defined above
+            # q_rgb = device.getOutputQueue(name="rgb", maxSize=4, blocking=False)
+            # stream_name = "rgb-" + mxId + "-" + eepromData.productName
+            # self.qRgbMap.append((q_rgb, stream_name))
+
             
         

@@ -361,33 +361,33 @@ class CameraColorApp(App):
         while self.root is None:
             await asyncio.sleep(0.01)
             
-        try:
-            deviceInfos = dai.Device.getAllAvailableDevices()
-        except Exception as e:
-            print(e)
-                
-        rgb_imgs = []
-        qRgbMap = self.oaks.qRgbMap
-        for q_rgb, stream_name in qRgbMap:
-            if q_rgb.has():
-                rgb_imgs = q_rgb.get().getCvFrame()
-        print(rgb_imgs)
-        texture = Texture.create(
-            size=(rgb_imgs.shape[1], rgb_imgs.shape[0]), icolorfmt="bgr"
-        )
+        #-------RGBs-------#
         
-        texture.flip_vertical()
-        texture.blit_buffer(
-            rgb_imgs.tobytes(),
-            colorfmt="bgr",
-            bufferfmt="ubyte",
-            mipmap_generation=False,
-        )
+        # rgb_imgs = []
+        for index, oak in enumerate(self.oaks.devices):
+            
+            rgb_img = oak.video.get().getCvFrame()
         
-        self.root.ids["rgb"].texture = texture
+            texture = Texture.create(
+                size=(rgb_img.shape[1], rgb_img.shape[0]), icolorfmt="bgr"
+            )
         
-        data_img = 20 * np.ones(shape=[800, 1500, 3], dtype=np.uint8)
-        cv2.putText(data_img, str(deviceInfos), (30,150),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+            texture.flip_vertical()
+            texture.blit_buffer(
+                rgb_img.tobytes(),
+                colorfmt="bgr",
+                bufferfmt="ubyte",
+                mipmap_generation=False,
+            )
+            
+            self.root.ids["rgb_" + str(index)].texture = texture
+        
+        
+        #-------depths-------#
+        
+        #-------Data-------#
+        # data_img = 20 * np.ones(shape=[800, 1500, 3], dtype=np.uint8)
+        # cv2.putText(data_img, str(deviceInfos), (30,150),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
 
         texture = Texture.create(
