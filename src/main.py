@@ -118,6 +118,7 @@ class CameraColorApp(App):
         # camera_client: OakCameraClient = OakCameraClient(camera_config)
         # self.oaks = Oak_system()
         self.start_Oaks()
+        self.streams = []
         # self.oaks = [Oak("10.95.76.10"), Oak("10.95.76.11")]
         # self.oak = Oak("10.95.76.11")
         # self.oak_1 = self.oaks.devices[0]
@@ -523,7 +524,6 @@ class CameraColorApp(App):
             # usbSpeed = dai.UsbSpeed.SUPER
             openVinoVersion = dai.OpenVINO.Version.VERSION_2021_4
             
-            self.streams = []
             self.devices = []
             
         for deviceInfo in self.deviceInfos:
