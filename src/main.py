@@ -131,8 +131,8 @@ class CameraColorApp(App):
             device: dai.Device = stack.enter_context(dai.Device(openVinoVersion, deviceInfo))
             self.devices.append(device)
             print("===Connected to ", deviceInfo.getMxId())
-        pipeline = self.createPipeline()
-        device.startPipeline(pipeline)
+            pipeline = self.createPipeline()
+            device.startPipeline(pipeline)
         
         self.streams.append( device.getOutputQueue(name = "video", maxSize = 12, blocking = False) )
 
