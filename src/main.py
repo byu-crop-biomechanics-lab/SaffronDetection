@@ -386,7 +386,7 @@ class CameraColorApp(App):
         #-------depths-------#
         
         #-------Data-------#
-        # data_img = 20 * np.ones(shape=[800, 1500, 3], dtype=np.uint8)
+        data_img = 20 * np.ones(shape=[800, 1500, 3], dtype=np.uint8)
         # cv2.putText(data_img, str(deviceInfos), (30,150),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
 
