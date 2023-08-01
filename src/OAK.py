@@ -102,7 +102,8 @@ class Oak:
         # xoutVideo.input.setBlocking(False)
         # xoutVideo.input.setQueueSize(12)
         
-        device_info = dai.DeviceInfo(ip)
+        device_info = dai.DeviceInfo(ip, state= dai.X_LINK_FLASH_BOOTED)
+        device_info.getXLinkDeviceDesc
         
         with dai.Device(pipeline, device_info) as device:
             self.video = device.getOutputQueue(name="rgb")
