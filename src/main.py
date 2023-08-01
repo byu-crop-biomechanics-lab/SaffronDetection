@@ -358,11 +358,12 @@ class CameraColorApp(App):
         while self.root is None:
             await asyncio.sleep(0.01)
             
-        img = np.zeros(shape=[512, 512, 3], dtype=np.uint8)
+        img = 200 * np.ones(shape=[512, 512, 3], dtype=np.uint8)
         
         texture = Texture.create(
             size=(img.shape[1], img.shape[0]), icolorfmt="bgr"
         )
+        
         texture.flip_vertical()
         texture.blit_buffer(
             img.tobytes(),
