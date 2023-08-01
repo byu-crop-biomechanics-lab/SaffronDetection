@@ -114,9 +114,8 @@ class CameraColorApp(App):
         #     address=self.address, port=self.camera_port
         # )
         # camera_client: OakCameraClient = OakCameraClient(camera_config)
-        self.oaks = Oak_system()
-        # self.oak_1 = self.oaks.devices[0]
-        # self.oak_2 = self.oaks.devices[1]
+        # self.oaks = Oak_system()
+        self.oaks = [Oak("10.95.76.10"), Oak("10.95.76.11")]
 
         # configure the canbus client
         canbus_config: ClientConfig = ClientConfig(
@@ -363,26 +362,26 @@ class CameraColorApp(App):
             await asyncio.sleep(0.01)
             
         #-------RGBs-------#
-        self.oaks.iter()
+        # self.oaks.iter()
+        for index, oak in enumerate(self.oaks):
+
         
-        # rgb_imgs = []
-        for index, stream in enumerate(self.oaks.streams):
-            if stream.has():
-                rgb_img = stream.get().getCvFrame()
+            # rgb_imgs = []
+            rgb_img = oak.frame
+        
+            texture = Texture.create(
+                size=(rgb_img.shape[1], rgb_img.shape[0]), icolorfmt="bgr"
+            )
+        
+            texture.flip_vertical()
+            texture.blit_buffer(
+                rgb_img.tobytes(),
+                colorfmt="bgr",
+                bufferfmt="ubyte",
+                mipmap_generation=False,
+            )
             
-                texture = Texture.create(
-                    size=(rgb_img.shape[1], rgb_img.shape[0]), icolorfmt="bgr"
-                )
-            
-                texture.flip_vertical()
-                texture.blit_buffer(
-                    rgb_img.tobytes(),
-                    colorfmt="bgr",
-                    bufferfmt="ubyte",
-                    mipmap_generation=False,
-                )
-                
-                self.root.ids[("rgb_" + str(index + 1))].texture = texture
+            self.root.ids[("rgb_" + str(index + 1))].texture = texture
         
         
         #-------depths-------#
