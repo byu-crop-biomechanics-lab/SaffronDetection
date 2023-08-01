@@ -438,12 +438,12 @@ if __name__ == "__main__":
     parser.add_argument(
         "--address", type=str, default="localhost", help="The server address"
     )
-    parser.add_argument(
-        "--camera-port",
-        type=int,
-        required=True,
-        help="The grpc port where the camera service is running.",
-    )
+    # parser.add_argument(
+    #     "--camera-port",
+    #     type=int,
+    #     required=True,
+    #     help="The grpc port where the camera service is running.",
+    # )
     parser.add_argument(
         "--canbus-port",
         type=int,
