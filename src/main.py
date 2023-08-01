@@ -525,7 +525,7 @@ class CameraColorApp(App):
                 T_x = self.gantry_x,
                 T_y = self.gantry_y,
             )
-            print("Sent TPDO")
+            # print("Sent TPDO")
             yield canbus_pb2.SendCanbusMessageRequest(message=msg)
             await asyncio.sleep(period)
             
