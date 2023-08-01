@@ -64,7 +64,7 @@ class Oak_system:
 
             pipeline = createPipeline()
             device.startPipeline(pipeline)
-            self.streams.append( device.getOutputQueue(name = "video", maxSize = 12, blocking = False) )
+            self.streams.append( device.getOutputQueue(name = "video", maxSize = 1, blocking = False) )
 
             # # Output queue will be used to get the rgb frames from the output defined above
             # q_rgb = device.getOutputQueue(name="rgb", maxSize=4, blocking=False)
