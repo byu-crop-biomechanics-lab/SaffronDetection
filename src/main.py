@@ -364,7 +364,7 @@ class CameraColorApp(App):
         #-------RGBs-------#
         # self.oaks.iter()
         for index, oak in enumerate(self.oaks):
-
+            oak.iter()
         
             # rgb_imgs = []
             rgb_img = oak.frame
