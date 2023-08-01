@@ -18,14 +18,17 @@ def createPipeline():
     camRgb = pipeline.create(dai.node.ColorCamera)
 
     # Properties
-    camRgb.setVideoSize(1920, 1080)
     camRgb.setBoardSocket(dai.CameraBoardSocket.CAM_A)
     camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_1080_P)
-    camRgb.setInterleaved(False)
+    camRgb.setVideoSize(1920, 1080)
+    # camRgb.setInterleaved(False)
 
     # Create output
     xoutRgb = pipeline.create(dai.node.XLinkOut)
     xoutRgb.setStreamName("rgb")
+    xoutRgb.input.setBlocking(False)
+    xoutRgb.input.setQueueSize(1)
+    
     camRgb.preview.link(xoutRgb.input)
 
     return pipeline
@@ -96,7 +99,7 @@ class Oak_system:
 
             pipeline = createPipeline()
             device.startPipeline(pipeline)
-            self.streams.append( device.getOutputQueue(name = "rgb", maxSize = 4, blocking = False) )
+            self.streams.append( device.getOutputQueue(name = "rgb", maxSize = 1, blocking = False) )
 
             # # Output queue will be used to get the rgb frames from the output defined above
             # q_rgb = device.getOutputQueue(name="rgb", maxSize=4, blocking=False)
