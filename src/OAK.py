@@ -71,11 +71,13 @@ class Oak_system:
             # stream_name = "rgb-" + mxId + "-" + eepromData.productName
             # self.qRgbMap.append((q_rgb, stream_name))
             
-    def iter(self):
+            for stream in self.streams:
+                if stream.has():
+                    stream.get()
+            
+    # def iter(self):
         
-        for stream in self.streams:
-            if stream.has():
-                stream.get()
+        
                 
 class Oak:
     def __init__(self, ip):
