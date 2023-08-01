@@ -63,7 +63,7 @@ def createPipeline():
     #             if cv2.waitKey(1) == ord('q'):
     #                 break
 
-class Oak_system():
+class Oak_system:
     
     def __init__(self):
         
