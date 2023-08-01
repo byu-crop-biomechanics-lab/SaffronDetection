@@ -379,7 +379,7 @@ class CameraColorApp(App):
         # else:
         #     rgb_img = 20 * np.ones(shape=[800, 1000, 3], dtype=np.uint8)
         
-            rgb_img = self.oak.stream
+            rgb_img = stream
             
             texture = Texture.create(
                 size=(rgb_img.shape[1], rgb_img.shape[0]), icolorfmt="bgr"
