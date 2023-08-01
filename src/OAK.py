@@ -39,7 +39,7 @@ class Oak_system:
         
         with contextlib.ExitStack() as stack:
             self.deviceInfos = dai.Device.getAllAvailableDevices()
-            usbSpeed = dai.UsbSpeed.SUPER
+            # usbSpeed = dai.UsbSpeed.SUPER
             openVinoVersion = dai.OpenVINO.Version.VERSION_2021_4
             
             self.streams = []
@@ -47,7 +47,7 @@ class Oak_system:
             
         for deviceInfo in self.deviceInfos:
             deviceInfo: dai.DeviceInfo
-            device: dai.Device = stack.enter_context(dai.Device(openVinoVersion, deviceInfo, usbSpeed))
+            device: dai.Device = stack.enter_context(dai.Device(openVinoVersion, deviceInfo))
             self.devices.append(device)
             print("===Connected to ", deviceInfo.getMxId())
             # mxId = device.getMxId()
@@ -93,7 +93,7 @@ class Oak:
         # Properties
         camRgb.setBoardSocket(dai.CameraBoardSocket.CAM_A)
         camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_1080_P)
-        # camRgb.setVideoSize(1920, 1080)
+        camRgb.setVideoSize(1920, 1080)
         # camRgb.setFps(30)
 
         # Linking
