@@ -25,7 +25,7 @@ def createPipeline():
 
     # Create output
     xoutRgb = pipeline.create(dai.node.XLinkOut)
-    xoutRgb.setStreamName("rgb")
+    xoutRgb.setStreamName("video")
     xoutRgb.input.setBlocking(False)
     xoutRgb.input.setQueueSize(1)
     
@@ -99,7 +99,7 @@ class Oak_system:
 
             pipeline = createPipeline()
             device.startPipeline(pipeline)
-            self.streams.append( device.getOutputQueue(name = "rgb", maxSize = 1, blocking = False) )
+            self.streams.append( device.getOutputQueue(name = "video", maxSize = 1, blocking = False) )
 
             # # Output queue will be used to get the rgb frames from the output defined above
             # q_rgb = device.getOutputQueue(name="rgb", maxSize=4, blocking=False)
