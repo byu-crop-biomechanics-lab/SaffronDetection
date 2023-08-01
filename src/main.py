@@ -380,7 +380,7 @@ class CameraColorApp(App):
                     mipmap_generation=False,
                 )
                 
-                self.root.ids[("rgb_" + str(index))].texture = texture
+                self.root.ids[("rgb_" + str(index + 1))].texture = texture
         
         
         #-------depths-------#
