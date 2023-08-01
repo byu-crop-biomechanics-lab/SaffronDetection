@@ -107,7 +107,6 @@ class Oak:
             self.video = device.getOutputQueue(name="video", maxSize=12, blocking=False)
             
     def iter(self):
-        
-        if self.video.has():
-            videoIn = self.video.get()
-            self.frame = videoIn.getCvFrame()
+
+        videoIn = self.video.get()
+        self.frame = videoIn.getCvFrame()
