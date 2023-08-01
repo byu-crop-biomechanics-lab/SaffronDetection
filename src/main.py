@@ -361,7 +361,8 @@ class CameraColorApp(App):
         
         while self.root is None:
             await asyncio.sleep(0.01)
-            
+        
+        rgb_img = None
             
         #-------Data-------#
         data_img = 20 * np.ones(shape=[800, 1500, 3], dtype=np.uint8)
