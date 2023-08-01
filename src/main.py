@@ -115,9 +115,9 @@ class CameraColorApp(App):
         #     address=self.address, port=self.camera_port
         # )
         # camera_client: OakCameraClient = OakCameraClient(camera_config)
-        # self.oaks = Oak_system()
+        self.oaks = Oak_system()
         # self.oaks = [Oak("10.95.76.10"), Oak("10.95.76.11")]
-        self.oak = Oak("10.95.76.11")
+        # self.oak = Oak("10.95.76.11")
         # self.oak_1 = self.oaks.devices[0]
         # self.oak_2 = self.oaks.devices[1]
 
@@ -366,7 +366,8 @@ class CameraColorApp(App):
             await asyncio.sleep(0.01)
             
         #-------RGBs-------#
-        self.oak.iter()
+        for stream in self.oaks.streams:
+            # self.oak.iter()
         
         # rgb_imgs = []
         # for index, oak in enumerate(self.oaks):
@@ -378,23 +379,23 @@ class CameraColorApp(App):
         # else:
         #     rgb_img = 20 * np.ones(shape=[800, 1000, 3], dtype=np.uint8)
         
-        rgb_img = self.oak.frame
+            rgb_img = self.oak.stream
+            
+            texture = Texture.create(
+                size=(rgb_img.shape[1], rgb_img.shape[0]), icolorfmt="bgr"
+            )
         
-        texture = Texture.create(
-            size=(rgb_img.shape[1], rgb_img.shape[0]), icolorfmt="bgr"
-        )
-    
-        texture.flip_vertical()
-        texture.blit_buffer(
-            rgb_img.tobytes(),
-            colorfmt="bgr",
-            bufferfmt="ubyte",
-            mipmap_generation=False,
-        )
+            texture.flip_vertical()
+            texture.blit_buffer(
+                rgb_img.tobytes(),
+                colorfmt="bgr",
+                bufferfmt="ubyte",
+                mipmap_generation=False,
+            )
+            
         
-    
-        index = 0
-        self.root.ids[("rgb_" + str(index + 1))].texture = texture
+            index = 0
+            self.root.ids[("rgb_" + str(index + 1))].texture = texture
         
         
         #-------depths-------#
