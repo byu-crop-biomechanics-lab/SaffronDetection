@@ -373,34 +373,34 @@ class CameraColorApp(App):
             # if stream.has():
         
             
-        if self.oak.video.has():
-            rgb_img = self.oak.video.get().getCvFrame()
+        # if self.oak.video.has():
+        #     rgb_img = self.oak.video.get().getCvFrame()
             
-        else:
-            rgb_img = 20 * np.ones(shape=[800, 1000, 3], dtype=np.uint8)
+        # else:
+        #     rgb_img = 20 * np.ones(shape=[800, 1000, 3], dtype=np.uint8)
         
-        texture = Texture.create(
-            size=(rgb_img.shape[1], rgb_img.shape[0]), icolorfmt="bgr"
-        )
+        # texture = Texture.create(
+        #     size=(rgb_img.shape[1], rgb_img.shape[0]), icolorfmt="bgr"
+        # )
     
-        texture.flip_vertical()
-        texture.blit_buffer(
-            rgb_img.tobytes(),
-            colorfmt="bgr",
-            bufferfmt="ubyte",
-            mipmap_generation=False,
-        )
+        # texture.flip_vertical()
+        # texture.blit_buffer(
+        #     rgb_img.tobytes(),
+        #     colorfmt="bgr",
+        #     bufferfmt="ubyte",
+        #     mipmap_generation=False,
+        # )
         
     
-        index = 0
-        self.root.ids[("rgb_" + str(index + 1))].texture = texture
+        # index = 0
+        # self.root.ids[("rgb_" + str(index + 1))].texture = texture
         
         
         #-------depths-------#
         
         #-------Data-------#
         data_img = 20 * np.ones(shape=[800, 1000, 3], dtype=np.uint8)
-        cv2.putText(data_img, str(self.oaks.devices), (30,150),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+        cv2.putText(data_img, str(self.oak.video), (30,150),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
 
         texture = Texture.create(
