@@ -11,23 +11,26 @@ import asyncio
 # class Oak:
 #     def __init__(self):
 def createPipeline():
-
-    # Create pipeline
+    # Start defining a pipeline
     pipeline = dai.Pipeline()
-
-    # Define source and output
+    
+    # Define a source - color camera
     camRgb = pipeline.create(dai.node.ColorCamera)
-    xoutVideo = pipeline.create(dai.node.XLinkOut)
-
-    xoutVideo.setStreamName("video")
+    xoutRgb = pipeline.create(dai.node.XLinkOut)
+    
+    xoutRgb.setStreamName("video")
 
     # Properties
     camRgb.setBoardSocket(dai.CameraBoardSocket.CAM_A)
     camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_1080_P)
     camRgb.setVideoSize(1920, 1080)
+    # camRgb.setInterleaved(False)
 
-    xoutVideo.input.setBlocking(False)
-    xoutVideo.input.setQueueSize(1)
+    # Create output
+    xoutRgb.input.setBlocking(False)
+    xoutRgb.input.setQueueSize(1)
+    
+    camRgb.video.link(xoutRgb.input)
 
     return pipeline
         
