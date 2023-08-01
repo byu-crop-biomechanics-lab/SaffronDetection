@@ -358,7 +358,7 @@ class CameraColorApp(App):
         while self.root is None:
             await asyncio.sleep(0.01)
             
-        img = 200 * np.ones(shape=[1000, 512, 3], dtype=np.uint8)
+        img = 200 * np.ones(shape=[1000, 1820, 3], dtype=np.uint8)
         
         texture = Texture.create(
             size=(img.shape[1], img.shape[0]), icolorfmt="bgr"
