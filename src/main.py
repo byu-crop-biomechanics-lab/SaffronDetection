@@ -61,10 +61,10 @@ from kivy.graphics.texture import Texture  # noqa: E402
 
 
 class CameraColorApp(App):
-    def __init__(self, address: str, camera_port: int, canbus_port: int, stream_every_n: int) -> None:
+    def __init__(self, address: str, canbus_port: int, stream_every_n: int) -> None:
         super().__init__()
         self.address: str = address
-        self.camera_port : int = camera_port
+        # self.camera_port : int = camera_port
         self.canbus_port: int = canbus_port
         self.stream_every_n = stream_every_n
         
@@ -464,7 +464,7 @@ if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     try:
         loop.run_until_complete(
-            CameraColorApp(args.address, args.camera_port, args.canbus_port, args.stream_every_n).app_func()
+            CameraColorApp(args.address, args.canbus_port, args.stream_every_n).app_func()
         )
     except asyncio.CancelledError:
         pass
