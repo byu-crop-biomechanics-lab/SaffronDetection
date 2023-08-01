@@ -117,7 +117,7 @@ class CameraColorApp(App):
         # camera_client: OakCameraClient = OakCameraClient(camera_config)
         # self.oaks = Oak_system()
         # self.oaks = [Oak("10.95.76.10"), Oak("10.95.76.11")]
-        self.oak = Oak("10.95.76.10")
+        self.oak = Oak("10.95.76.11")
         # self.oak_1 = self.oaks.devices[0]
         # self.oak_2 = self.oaks.devices[1]
 
