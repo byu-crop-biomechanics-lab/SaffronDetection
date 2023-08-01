@@ -29,7 +29,8 @@ from farm_ng.canbus.packet import parse_amiga_tpdo1_proto
 from farm_ng.service import service_pb2
 from farm_ng.service.service_client import ClientConfig
 import turbojpeg
-from OAK import Oak
+# from OAK import Oak
+from OAK import Oak_system
 import depthai as dai
 
 # things I've added #
@@ -112,6 +113,7 @@ class CameraColorApp(App):
         #     address=self.address, port=self.camera_port
         # )
         # camera_client: OakCameraClient = OakCameraClient(camera_config)
+        Oak_system()
 
         # configure the canbus client
         canbus_config: ClientConfig = ClientConfig(
@@ -381,6 +383,8 @@ class CameraColorApp(App):
         )
         
         self.root.ids["data"].texture = texture
+        
+        q_rgb = Oak_system.iter()
         
                     
                     
