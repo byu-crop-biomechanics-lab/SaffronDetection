@@ -133,7 +133,7 @@ class CameraColorApp(App):
             print("===Connected to ", deviceInfo.getMxId())
             pipeline = self.createPipeline()
             device.startPipeline(pipeline)
-            self.streams.append( device.getOutputQueue(name = "video", maxSize = 12, blocking = False) )
+            await self.streams.append( device.getOutputQueue(name = "video", maxSize = 12, blocking = False) )
 
         # self.oaks = [Oak("10.95.76.10"), Oak("10.95.76.11")]
         # self.oak = Oak("10.95.76.11")
@@ -425,7 +425,7 @@ class CameraColorApp(App):
         #     rgb_img = 20 * np.ones(shape=[800, 1000, 3], dtype=np.uint8)
         for index, stream in enumerate(self.streams):
             if  stream.has():
-                rgb_img = await (stream.get()).getCvFrame()
+                rgb_img = (stream.get()).getCvFrame()
                 
                 texture = Texture.create(
                     size=(rgb_img.shape[1], rgb_img.shape[0]), icolorfmt="bgr"
