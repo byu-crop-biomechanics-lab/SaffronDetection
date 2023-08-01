@@ -364,9 +364,9 @@ class CameraColorApp(App):
         #-------RGBs-------#
         
         # rgb_imgs = []
-        for index, oak in enumerate(self.oaks.devices):
-            if oak.video.has():
-                rgb_img = oak.video.get().getCvFrame()
+        for index, stream in enumerate(self.oaks.streams):
+            if stream.has():
+                rgb_img = stream.get().getCvFrame()
             
                 texture = Texture.create(
                     size=(rgb_img.shape[1], rgb_img.shape[0]), icolorfmt="bgr"
