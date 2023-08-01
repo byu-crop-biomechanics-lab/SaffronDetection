@@ -31,6 +31,7 @@ from farm_ng.service.service_client import ClientConfig
 import turbojpeg
 # from OAK import Oak
 from OAK import Oak_system
+from OAK import Oak
 
 import depthai as dai
 
@@ -114,7 +115,8 @@ class CameraColorApp(App):
         #     address=self.address, port=self.camera_port
         # )
         # camera_client: OakCameraClient = OakCameraClient(camera_config)
-        self.oaks = Oak_system()
+        # self.oaks = Oak_system()
+        self.oaks = [Oak("10.95.76.10"), Oak("10.95.76.11")]
         # self.oak_1 = self.oaks.devices[0]
         # self.oak_2 = self.oaks.devices[1]
 
@@ -356,7 +358,7 @@ class CameraColorApp(App):
 
     #             except Exception as e:
     #                 print(e)
-                    
+                      
     async def stream_Oak(self):
         
         while self.root is None:
@@ -366,9 +368,10 @@ class CameraColorApp(App):
         # self.oaks.iter()
         
         # rgb_imgs = []
-        for index, stream in enumerate(self.oaks.streams):
+        for index, oak in enumerate(self.oaks):
             # if stream.has():
-            rgb_img = stream.getCvFrame()
+            oak.iter()
+            rgb_img = oak.video
             
             texture = Texture.create(
                 size=(rgb_img.shape[1], rgb_img.shape[0]), icolorfmt="bgr"
@@ -388,7 +391,7 @@ class CameraColorApp(App):
         #-------depths-------#
         
         #-------Data-------#
-        data_img = 20 * np.ones(shape=[800, 1500, 3], dtype=np.uint8)
+        data_img = 20 * np.ones(shape=[800, 1000, 3], dtype=np.uint8)
         cv2.putText(data_img, str(self.oaks.devices), (30,150),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
 
