@@ -123,9 +123,9 @@ class CameraColorApp(App):
         # self.tasks.append(
         #     asyncio.ensure_future(self.stream_camera(camera_client))
         # )
-        # self.tasks.append(
-        #     asyncio.ensure_future(self.stream_Oak())
-        # )
+        self.tasks.append(
+            asyncio.ensure_future(self.stream_Oak())
+        )
 
         # Canbus task(s)
         self.tasks.append(
@@ -352,10 +352,12 @@ class CameraColorApp(App):
     #             except Exception as e:
     #                 print(e)
                     
-    def stream_Oak(self):
+    async def stream_Oak(self):
         
         # deviceInfos = dai.Device.getAllAvailableDevices()
-
+        while self.root is None:
+            await asyncio.sleep(0.01)
+            
         img = np.zeros(shape=[512, 512, 3], dtype=np.uint8)
         
         texture = Texture.create(
