@@ -393,11 +393,11 @@ class CameraColorApp(App):
         camRgb.setBoardSocket(dai.CameraBoardSocket.CAM_A)
         camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_1080_P)
         camRgb.setVideoSize(1920, 1080)
-        camRgb.setFps(1)
+        # camRgb.setFps(1)
 
         # Create output
-        xoutRgb.input.setBlocking(False)
-        xoutRgb.input.setQueueSize(30)
+        # xoutRgb.input.setBlocking(False)
+        # xoutRgb.input.setQueueSize(30)
         
         camRgb.video.link(xoutRgb.input)
 
@@ -424,8 +424,8 @@ class CameraColorApp(App):
         # else:
         #     rgb_img = 20 * np.ones(shape=[800, 1000, 3], dtype=np.uint8)
         for index, stream in enumerate(self.streams):
-            if stream.has():
-                rgb_img = (stream.get()).getCvFrame()
+            if  stream.has():
+                rgb_img = await (stream.get()).getCvFrame()
                 
                 texture = Texture.create(
                     size=(rgb_img.shape[1], rgb_img.shape[0]), icolorfmt="bgr"
