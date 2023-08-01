@@ -133,7 +133,7 @@ class CameraColorApp(App):
             print("===Connected to ", deviceInfo.getMxId())
             pipeline = self.createPipeline()
             device.startPipeline(pipeline)
-            await self.streams.append( device.getOutputQueue(name = "video", maxSize = 12, blocking = False) )
+            self.streams.append( device.getOutputQueue(name = "video", maxSize = 12, blocking = False) )
 
         # self.oaks = [Oak("10.95.76.10"), Oak("10.95.76.11")]
         # self.oak = Oak("10.95.76.11")
@@ -141,10 +141,10 @@ class CameraColorApp(App):
         # self.oak_2 = self.oaks.devices[1]
 
         # configure the canbus client
-        canbus_config: ClientConfig = ClientConfig(
-            address=self.address, port=self.canbus_port
-        )
-        canbus_client: CanbusClient = CanbusClient(canbus_config)
+        # canbus_config: ClientConfig = ClientConfig(
+        #     address=self.address, port=self.canbus_port
+        # )
+        # canbus_client: CanbusClient = CanbusClient(canbus_config)
 
         # # Camera task(s)
         # self.tasks.append(
@@ -155,12 +155,12 @@ class CameraColorApp(App):
         )
 
         # Canbus task(s)
-        self.tasks.append(
-            asyncio.ensure_future(self.stream_canbus(canbus_client))
-        )
-        self.tasks.append(
-            asyncio.ensure_future(self.send_can_msgs(canbus_client))
-        )
+        # self.tasks.append(
+        #     asyncio.ensure_future(self.stream_canbus(canbus_client))
+        # )
+        # self.tasks.append(
+        #     asyncio.ensure_future(self.send_can_msgs(canbus_client))
+        # )
 
 
         return await asyncio.gather(run_wrapper(), *self.tasks)
