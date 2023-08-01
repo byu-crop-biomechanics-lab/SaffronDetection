@@ -406,7 +406,10 @@ class CameraColorApp(App):
         
         while self.root is None:
             await asyncio.sleep(0.01)
-        # streams = []
+        for device in self.devices:
+            streams = []
+            self.streams.append( device.getOutputQueue(name = "video", maxSize = 12, blocking = False) )
+
         #-------RGBs-------#
         # for index, device in enumerate(self.oaks.devices):
         #     stream = device.getOutputQueue(name = "video", maxSize = 12, blocking = False)
@@ -422,7 +425,7 @@ class CameraColorApp(App):
             
         # else:
         #     rgb_img = 20 * np.ones(shape=[800, 1000, 3], dtype=np.uint8)
-        for index, stream in enumerate(self.streams):
+        for index, stream in enumerate(streams):
             if stream.has():
                 rgb_img = (stream.get()).getCvFrame()
                 
