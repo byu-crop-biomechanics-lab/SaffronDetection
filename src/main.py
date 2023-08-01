@@ -44,6 +44,8 @@ from gantry import parse_gantry_rpdo1_proto
 
 import cv2
 import numpy as np
+import contextlib
+
 #----#
 
 os.environ["KIVY_NO_ARGS"] = "1"
@@ -115,7 +117,25 @@ class CameraColorApp(App):
         #     address=self.address, port=self.camera_port
         # )
         # camera_client: OakCameraClient = OakCameraClient(camera_config)
-        self.oaks = Oak_system()
+        # self.oaks = Oak_system()
+        with contextlib.ExitStack() as stack:
+            self.deviceInfos = dai.Device.getAllAvailableDevices()
+            # usbSpeed = dai.UsbSpeed.SUPER
+            openVinoVersion = dai.OpenVINO.Version.VERSION_2021_4
+            
+            self.streams = []
+            self.devices = []
+            
+        for deviceInfo in self.deviceInfos:
+            deviceInfo: dai.DeviceInfo
+            device: dai.Device = stack.enter_context(dai.Device(openVinoVersion, deviceInfo))
+            self.devices.append(device)
+            print("===Connected to ", deviceInfo.getMxId())
+        pipeline = self.createPipeline()
+        device.startPipeline(pipeline)
+        
+        self.streams.append( device.getOutputQueue(name = "video", maxSize = 1, blocking = False) )
+
         # self.oaks = [Oak("10.95.76.10"), Oak("10.95.76.11")]
         # self.oak = Oak("10.95.76.11")
         # self.oak_1 = self.oaks.devices[0]
@@ -360,6 +380,29 @@ class CameraColorApp(App):
     #             except Exception as e:
     #                 print(e)
                       
+    def createPipeline(self):
+        # Start defining a pipeline
+        pipeline = dai.Pipeline()
+        
+        # Define a source - color camera
+        camRgb = pipeline.create(dai.node.ColorCamera)
+        xoutRgb = pipeline.create(dai.node.XLinkOut)
+        
+        xoutRgb.setStreamName("video")
+
+        # Properties
+        camRgb.setBoardSocket(dai.CameraBoardSocket.CAM_A)
+        camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_1080_P)
+        camRgb.setVideoSize(1920, 1080)
+
+        # Create output
+        xoutRgb.input.setBlocking(False)
+        xoutRgb.input.setQueueSize(12)
+        
+        camRgb.video.link(xoutRgb.input)
+
+        return pipeline
+
     async def stream_Oak(self):
         
         while self.root is None:
@@ -380,25 +423,25 @@ class CameraColorApp(App):
             
         # else:
         #     rgb_img = 20 * np.ones(shape=[800, 1000, 3], dtype=np.uint8)
-        for index, device in enumerate(self.oaks.devices):
-            frame = self.oaks.frame(device)
-            rgb_img = frame.getCvFrame()
+        for index, stream in enumerate(self.streams):
+            if stream.has():
+                rgb_img = (stream.get()).getCvFrame()
+                
+                texture = Texture.create(
+                    size=(rgb_img.shape[1], rgb_img.shape[0]), icolorfmt="bgr"
+                )
             
-            texture = Texture.create(
-                size=(rgb_img.shape[1], rgb_img.shape[0]), icolorfmt="bgr"
-            )
-        
-            texture.flip_vertical()
-            texture.blit_buffer(
-                rgb_img.tobytes(),
-                colorfmt="bgr",
-                bufferfmt="ubyte",
-                mipmap_generation=False,
-            )
+                texture.flip_vertical()
+                texture.blit_buffer(
+                    rgb_img.tobytes(),
+                    colorfmt="bgr",
+                    bufferfmt="ubyte",
+                    mipmap_generation=False,
+                )
+                
             
-        
-            # index = 0
-            self.root.ids[("rgb_" + str(index + 1))].texture = texture
+                # index = 0
+                self.root.ids[("rgb_" + str(index + 1))].texture = texture
         
         
         #-------depths-------#
