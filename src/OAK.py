@@ -82,21 +82,21 @@ class Oak_system:
             device: dai.Device = stack.enter_context(dai.Device(openVinoVersion, deviceInfo, usbSpeed))
             self.devices.append(device)
             print("===Connected to ", deviceInfo.getMxId())
-            mxId = device.getMxId()
-            cameras = device.getConnectedCameras()
-            usbSpeed = device.getUsbSpeed()
-            eepromData = device.readCalibration2().getEepromData()
-            print("   >>> MXID:", mxId)
-            print("   >>> Num of cameras:", len(cameras))
-            print("   >>> USB speed:", usbSpeed)
-            if eepromData.boardName != "":
-                print("   >>> Board name:", eepromData.boardName)
-            if eepromData.productName != "":
-                print("   >>> Product name:", eepromData.productName)
+            # mxId = device.getMxId()
+            # cameras = device.getConnectedCameras()
+            # usbSpeed = device.getUsbSpeed()
+            # eepromData = device.readCalibration2().getEepromData()
+            # print("   >>> MXID:", mxId)
+            # print("   >>> Num of cameras:", len(cameras))
+            # print("   >>> USB speed:", usbSpeed)
+            # if eepromData.boardName != "":
+            #     print("   >>> Board name:", eepromData.boardName)
+            # if eepromData.productName != "":
+            #     print("   >>> Product name:", eepromData.productName)
 
             pipeline = createPipeline()
             device.startPipeline(pipeline)
-            self.streams.append( device.getOutputQueue(name = "stream", maxSize = 4, blocking = False) )
+            self.streams.append( device.getOutputQueue(name = "rgb", maxSize = 4, blocking = False) )
 
             # # Output queue will be used to get the rgb frames from the output defined above
             # q_rgb = device.getOutputQueue(name="rgb", maxSize=4, blocking=False)
