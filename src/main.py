@@ -367,22 +367,22 @@ class CameraColorApp(App):
         
         # rgb_imgs = []
         for index, stream in enumerate(self.oaks.streams):
-            if stream.has():
-                rgb_img = stream.get().getCvFrame()
+            # if stream.has():
+            rgb_img = stream.getCvFrame()
+        
+            texture = Texture.create(
+                size=(rgb_img.shape[1], rgb_img.shape[0]), icolorfmt="bgr"
+            )
+        
+            texture.flip_vertical()
+            texture.blit_buffer(
+                rgb_img.tobytes(),
+                colorfmt="bgr",
+                bufferfmt="ubyte",
+                mipmap_generation=False,
+            )
             
-                texture = Texture.create(
-                    size=(rgb_img.shape[1], rgb_img.shape[0]), icolorfmt="bgr"
-                )
-            
-                texture.flip_vertical()
-                texture.blit_buffer(
-                    rgb_img.tobytes(),
-                    colorfmt="bgr",
-                    bufferfmt="ubyte",
-                    mipmap_generation=False,
-                )
-                
-                self.root.ids[("rgb_" + str(index + 1))].texture = texture
+            self.root.ids[("rgb_" + str(index + 1))].texture = texture
         
         
         #-------depths-------#
