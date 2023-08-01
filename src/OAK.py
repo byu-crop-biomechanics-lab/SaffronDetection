@@ -114,5 +114,5 @@ class Oak:
             
     def iter(self):
 
-        videoIn = self.video.tryGetAll()
+        videoIn = self.video.get()
         self.frame = videoIn.getCvFrame()
