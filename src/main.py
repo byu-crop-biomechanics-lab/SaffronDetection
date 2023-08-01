@@ -116,7 +116,8 @@ class CameraColorApp(App):
         # )
         # camera_client: OakCameraClient = OakCameraClient(camera_config)
         # self.oaks = Oak_system()
-        self.oaks = [Oak("10.95.76.10"), Oak("10.95.76.11")]
+        # self.oaks = [Oak("10.95.76.10"), Oak("10.95.76.11")]
+        self.oak = Oak("10.95.76.10")
         # self.oak_1 = self.oaks.devices[0]
         # self.oak_2 = self.oaks.devices[1]
 
@@ -368,30 +369,31 @@ class CameraColorApp(App):
         # self.oaks.iter()
         
         # rgb_imgs = []
-        for index, oak in enumerate(self.oaks):
+        # for index, oak in enumerate(self.oaks):
             # if stream.has():
+        
             
-            if oak.video.has():
-                rgb_img = oak.video.get()
-                
-            else:
-                rgb_img = 20 * np.ones(shape=[800, 1000, 3], dtype=np.uint8)
+        if self.oak.video.has():
+            rgb_img = self.oak.video.get().getCvFrame()
             
-                texture = Texture.create(
-                    size=(rgb_img.shape[1], rgb_img.shape[0]), icolorfmt="bgr"
-                )
-            
-                texture.flip_vertical()
-                texture.blit_buffer(
-                    rgb_img.tobytes(),
-                    colorfmt="bgr",
-                    bufferfmt="ubyte",
-                    mipmap_generation=False,
-                )
-                
-            
-
-                self.root.ids[("rgb_" + str(index + 1))].texture = texture
+        else:
+            rgb_img = 20 * np.ones(shape=[800, 1000, 3], dtype=np.uint8)
+        
+        texture = Texture.create(
+            size=(rgb_img.shape[1], rgb_img.shape[0]), icolorfmt="bgr"
+        )
+    
+        texture.flip_vertical()
+        texture.blit_buffer(
+            rgb_img.tobytes(),
+            colorfmt="bgr",
+            bufferfmt="ubyte",
+            mipmap_generation=False,
+        )
+        
+    
+        index = 0
+        self.root.ids[("rgb_" + str(index + 1))].texture = texture
         
         
         #-------depths-------#
