@@ -352,7 +352,7 @@ class CameraColorApp(App):
     #             except Exception as e:
     #                 print(e)
                     
-    def stream_Oak(self):
+    async def stream_Oak(self):
         
         # deviceInfos = dai.Device.getAllAvailableDevices()
 
