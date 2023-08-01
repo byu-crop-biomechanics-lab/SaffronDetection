@@ -428,7 +428,7 @@ class CameraColorApp(App):
                 
             
                 # index = 0
-                self.root.ids[("rgb_" + str(index + 1))].texture = texture
+                # self.root.ids[("rgb_" + str(index + 1))].texture = texture
         
         
         #-------depths-------#
@@ -450,7 +450,7 @@ class CameraColorApp(App):
             mipmap_generation=False,
         )
         
-        self.root.ids["data"].texture = texture
+        # self.root.ids["data"].texture = texture
         
         # img = self.oaks.devices[0].q_rgb.get().getCvFrame()
         
