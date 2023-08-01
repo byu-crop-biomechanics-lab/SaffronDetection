@@ -435,7 +435,7 @@ class CameraColorApp(App):
         
         #-------Data-------#
         data_img = 20 * np.ones(shape=[800, 1000, 3], dtype=np.uint8)
-        cv2.putText(data_img, str(self.streams[0].get()getCvFrame()), (30,150),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+        cv2.putText(data_img, str(self.streams[0].get().getCvFrame()), (30,150),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
 
         texture = Texture.create(
