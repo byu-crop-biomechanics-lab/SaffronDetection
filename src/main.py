@@ -134,7 +134,7 @@ class CameraColorApp(App):
         pipeline = self.createPipeline()
         device.startPipeline(pipeline)
         
-        self.streams.append( device.getOutputQueue(name = "video", maxSize = 30, blocking = False) )
+        self.streams.append( device.getOutputQueue(name = "video", maxSize = 12, blocking = False) )
 
         # self.oaks = [Oak("10.95.76.10"), Oak("10.95.76.11")]
         # self.oak = Oak("10.95.76.11")
