@@ -384,7 +384,7 @@ class CameraColorApp(App):
         
         self.root.ids["data"].texture = texture
         
-        q_rgb = self.oaks.iter()
+        self.qRgbMap = self.oaks.iter()
         
                     
                     

@@ -102,8 +102,7 @@ class Oak_system:
             
     def iter(self):
     
-        for q_rgb, stream_name in self.qRgbMap:
-            return q_rgb
+        return self.qRgbMap
             # if q_rgb.has():
             #     cv2.imshow(stream_name, q_rgb.get().getCvFrame())
         
