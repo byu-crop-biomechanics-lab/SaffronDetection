@@ -11,7 +11,6 @@ import asyncio
 import os
 from typing import List
 from typing import Optional
-import contextlib
 
 import grpc
 
@@ -116,9 +115,7 @@ class CameraColorApp(App):
         #     address=self.address, port=self.camera_port
         # )
         # camera_client: OakCameraClient = OakCameraClient(camera_config)
-        # self.oaks = Oak_system()
-        self.start_Oaks()
-        self.streams = []
+        self.oaks = Oak_system()
         # self.oaks = [Oak("10.95.76.10"), Oak("10.95.76.11")]
         # self.oak = Oak("10.95.76.11")
         # self.oak_1 = self.oaks.devices[0]
@@ -367,9 +364,11 @@ class CameraColorApp(App):
         
         while self.root is None:
             await asyncio.sleep(0.01)
-            
+        # streams = []
         #-------RGBs-------#
-        for index, stream in enumerate(self.streams):
+        for index, device in enumerate(self.oaks.devices):
+            stream = device.getOutputQueue(name = "video", maxSize = 1, blocking = False)
+
             # self.oak.iter()
         
         # rgb_imgs = []
@@ -381,31 +380,32 @@ class CameraColorApp(App):
             
         # else:
         #     rgb_img = 20 * np.ones(shape=[800, 1000, 3], dtype=np.uint8)
-            frame = stream.get()
-            rgb_img = frame.getCvFrame()
+            if stream.has():
+                frame = stream.get()
+                rgb_img = frame.getCvFrame()
+                
+                texture = Texture.create(
+                    size=(rgb_img.shape[1], rgb_img.shape[0]), icolorfmt="bgr"
+                )
             
-            texture = Texture.create(
-                size=(rgb_img.shape[1], rgb_img.shape[0]), icolorfmt="bgr"
-            )
-        
-            texture.flip_vertical()
-            texture.blit_buffer(
-                rgb_img.tobytes(),
-                colorfmt="bgr",
-                bufferfmt="ubyte",
-                mipmap_generation=False,
-            )
+                texture.flip_vertical()
+                texture.blit_buffer(
+                    rgb_img.tobytes(),
+                    colorfmt="bgr",
+                    bufferfmt="ubyte",
+                    mipmap_generation=False,
+                )
+                
             
-        
-            # index = 0
-            self.root.ids[("rgb_" + str(index + 1))].texture = texture
+                # index = 0
+                self.root.ids[("rgb_" + str(index + 1))].texture = texture
         
         
         #-------depths-------#
         
         #-------Data-------#
         data_img = 20 * np.ones(shape=[800, 1000, 3], dtype=np.uint8)
-        cv2.putText(data_img, str(self.streams), (30,150),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+        cv2.putText(data_img, str(self.oaks.streams[0].has()), (30,150),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
 
         texture = Texture.create(
@@ -486,75 +486,7 @@ class CameraColorApp(App):
             yield canbus_pb2.SendCanbusMessageRequest(message=msg)
             await asyncio.sleep(period)
             
-    async def createPipeline(self):
-        
-        while self.root is None:
-            await asyncio.sleep(0.01)
-            
-        # Start defining a pipeline
-        pipeline = dai.Pipeline()
-        
-        # Define a source - color camera
-        camRgb = pipeline.create(dai.node.ColorCamera)
-        xoutRgb = pipeline.create(dai.node.XLinkOut)
-        
-        xoutRgb.setStreamName("video")
-
-        # Properties
-        camRgb.setBoardSocket(dai.CameraBoardSocket.CAM_A)
-        camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_1080_P)
-        camRgb.setVideoSize(1920, 1080)
-
-        # Create output
-        xoutRgb.input.setBlocking(False)
-        xoutRgb.input.setQueueSize(12)
-        
-        camRgb.video.link(xoutRgb.input)
-
-        return pipeline
-
-            
-    async def start_Oaks(self):
-        
-        while self.root is None:
-            await asyncio.sleep(0.01)
-        
-        with contextlib.ExitStack() as stack:
-            self.deviceInfos = dai.Device.getAllAvailableDevices()
-            # usbSpeed = dai.UsbSpeed.SUPER
-            openVinoVersion = dai.OpenVINO.Version.VERSION_2021_4
-            
-            self.devices = []
-            
-        for deviceInfo in self.deviceInfos:
-            deviceInfo: dai.DeviceInfo
-            device: dai.Device = stack.enter_context(dai.Device(openVinoVersion, deviceInfo))
-            self.devices.append(device)
-            print("===Connected to ", deviceInfo.getMxId())
-            # mxId = device.getMxId()
-            # cameras = device.getConnectedCameras()
-            # usbSpeed = device.getUsbSpeed()
-            # eepromData = device.readCalibration2().getEepromData()
-            # print("   >>> MXID:", mxId)
-            # print("   >>> Num of cameras:", len(cameras))
-            # print("   >>> USB speed:", usbSpeed)
-            # if eepromData.boardName != "":
-            #     print("   >>> Board name:", eepromData.boardName)
-            # if eepromData.productName != "":
-            #     print("   >>> Product name:", eepromData.productName)
-
-            pipeline = self.createPipeline()
-            device.startPipeline(pipeline)
-            self.streams.append( device.getOutputQueue(name = "video", maxSize = 1, blocking = False) )
-
-            # # Output queue will be used to get the rgb frames from the output defined above
-            # q_rgb = device.getOutputQueue(name="rgb", maxSize=4, blocking=False)
-            # stream_name = "rgb-" + mxId + "-" + eepromData.productName
-            # self.qRgbMap.append((q_rgb, stream_name))
-            
-            # for stream in self.streams:
-            #     if stream.has():
-            #         stream.get()
+    
             
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="color-detector-oak")
