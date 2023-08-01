@@ -366,7 +366,7 @@ class CameraColorApp(App):
             await asyncio.sleep(0.01)
             
         #-------RGBs-------#
-        self.oaks.iter()
+        self.oak.iter()
         
         # rgb_imgs = []
         # for index, oak in enumerate(self.oaks):
