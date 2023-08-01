@@ -381,7 +381,7 @@ class CameraColorApp(App):
         # else:
         #     rgb_img = 20 * np.ones(shape=[800, 1000, 3], dtype=np.uint8)
         for index, device in enumerate(self.oaks.devices):
-            frame = self.oaks.frames(device)
+            frame = self.oaks.frame(device)
             rgb_img = frame.getCvFrame()
             
             texture = Texture.create(

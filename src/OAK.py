@@ -75,15 +75,13 @@ class Oak_system:
             #     if stream.has():
             #         stream.get()
             
-    def frames(self, device):
-        frames = []
-        streams = device.getOutputQueue(name = "video", maxSize = 1, blocking = False) 
-        for stream in streams:
-            if stream.has():
-                frames.append(stream.get())
-            else:
-                frames.append(0)
-        return frames
+    def frame(self, device):
+        stream = device.getOutputQueue(name = "video", maxSize = 1, blocking = False) 
+        if stream.has():
+            frame = stream.get()
+        else:
+            frame = None
+        return frame
                 
         
         
