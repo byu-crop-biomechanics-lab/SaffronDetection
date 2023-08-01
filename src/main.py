@@ -371,14 +371,14 @@ class CameraColorApp(App):
         for q_rgb, stream_name in qRgbMap:
             if q_rgb.has():
                 rgb_imgs = q_rgb.get().getCvFrame()
-                
+        print(rgb_imgs)
         texture = Texture.create(
-            size=(rgb_imgs[0].shape[1], rgb_imgs[0].shape[0]), icolorfmt="bgr"
+            size=(rgb_imgs.shape[1], rgb_imgs.shape[0]), icolorfmt="bgr"
         )
         
         texture.flip_vertical()
         texture.blit_buffer(
-            rgb_imgs[0].tobytes(),
+            rgb_imgs.tobytes(),
             colorfmt="bgr",
             bufferfmt="ubyte",
             mipmap_generation=False,
