@@ -89,6 +89,8 @@ class Oak:
         xoutVideo = pipeline.create(dai.node.XLinkOut)
 
         xoutVideo.setStreamName("rgb")
+        xoutVideo.input.setBlocking(False)
+        xoutVideo.input.setQueueSize(1)
 
         # Properties
         camRgb.setBoardSocket(dai.CameraBoardSocket.CAM_A)
@@ -99,15 +101,12 @@ class Oak:
         # Linking
         camRgb.video.link(xoutVideo.input)
         
-        # xoutVideo.input.setBlocking(False)
-        # xoutVideo.input.setQueueSize(12)
-        
         device_info = dai.DeviceInfo(ip)
         
         # device_info.state = dai.X_LINK_BOOTED
         
         with dai.Device(pipeline, device_info) as device:
-            self.video = device.getOutputQueue(name="rgb")
+            self.video = device.getOutputQueue(name="rgb", maxSize=1, blocking=False)
             
             # while True:
             #     self.frame = (self.video.get()).getCvFrame()
