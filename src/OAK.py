@@ -94,7 +94,7 @@ class Oak:
         camRgb.setVideoSize(1920, 1080)
 
         xoutVideo.input.setBlocking(False)
-        xoutVideo.input.setQueueSize(1)
+        xoutVideo.input.setQueueSize(12)
 
         # Linking
         camRgb.video.link(xoutVideo.input)
@@ -102,7 +102,7 @@ class Oak:
         device_info = dai.DeviceInfo(ip)
         
         with dai.Device(pipeline, device_info) as device:
-            self.video = device.getOutputQueue(name="video", maxSize=1, blocking=False)
+            self.video = device.getOutputQueue(name="video", maxSize=12, blocking=False)
             
     def iter(self):
         
