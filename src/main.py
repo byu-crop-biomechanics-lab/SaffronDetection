@@ -356,7 +356,7 @@ class CameraColorApp(App):
         
         # deviceInfos = dai.Device.getAllAvailableDevices()
 
-        np.zeros(shape=[512, 512, 3], dtype=np.uint8)
+        img = np.zeros(shape=[512, 512, 3], dtype=np.uint8)
         
         texture = Texture.create(
             size=(img.shape[1], img.shape[0]), icolorfmt="bgr"
