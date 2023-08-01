@@ -362,6 +362,7 @@ class CameraColorApp(App):
             await asyncio.sleep(0.01)
             
         #-------RGBs-------#
+        self.oaks.iter()
         
         # rgb_imgs = []
         for index, stream in enumerate(self.oaks.streams):
