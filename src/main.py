@@ -393,6 +393,7 @@ class CameraColorApp(App):
         camRgb.setBoardSocket(dai.CameraBoardSocket.CAM_A)
         camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_1080_P)
         camRgb.setVideoSize(1920, 1080)
+        camRgb.setFps(5)
 
         # Create output
         xoutRgb.input.setBlocking(False)
