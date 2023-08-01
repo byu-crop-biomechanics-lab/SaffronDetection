@@ -371,21 +371,27 @@ class CameraColorApp(App):
         for index, oak in enumerate(self.oaks):
             # if stream.has():
             
-            rgb_img = oak.video.get()
+            if oak.video.has():
+                rgb_img = oak.video.get()
+                
+            else:
+                rgb_img = 20 * np.ones(shape=[800, 1000, 3], dtype=np.uint8)
             
-            texture = Texture.create(
-                size=(rgb_img.shape[1], rgb_img.shape[0]), icolorfmt="bgr"
-            )
-        
-            texture.flip_vertical()
-            texture.blit_buffer(
-                rgb_img.tobytes(),
-                colorfmt="bgr",
-                bufferfmt="ubyte",
-                mipmap_generation=False,
-            )
+                texture = Texture.create(
+                    size=(rgb_img.shape[1], rgb_img.shape[0]), icolorfmt="bgr"
+                )
             
-            self.root.ids[("rgb_" + str(index + 1))].texture = texture
+                texture.flip_vertical()
+                texture.blit_buffer(
+                    rgb_img.tobytes(),
+                    colorfmt="bgr",
+                    bufferfmt="ubyte",
+                    mipmap_generation=False,
+                )
+                
+            
+
+                self.root.ids[("rgb_" + str(index + 1))].texture = texture
         
         
         #-------depths-------#
