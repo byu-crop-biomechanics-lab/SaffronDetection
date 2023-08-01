@@ -107,8 +107,8 @@ class Oak:
         with dai.Device(pipeline, device_info) as device:
             self.video = device.getOutputQueue(name="rgb")
             
-            while True:
-                self.frame = (self.video.get()).getCvFrame()
+            # while True:
+            #     self.frame = (self.video.get()).getCvFrame()
             
     def iter(self):
 
