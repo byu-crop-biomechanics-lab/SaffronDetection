@@ -141,10 +141,10 @@ class CameraColorApp(App):
         # self.oak_2 = self.oaks.devices[1]
 
         # configure the canbus client
-        # canbus_config: ClientConfig = ClientConfig(
-        #     address=self.address, port=self.canbus_port
-        # )
-        # canbus_client: CanbusClient = CanbusClient(canbus_config)
+        canbus_config: ClientConfig = ClientConfig(
+            address=self.address, port=self.canbus_port
+        )
+        canbus_client: CanbusClient = CanbusClient(canbus_config)
 
         # # Camera task(s)
         # self.tasks.append(
@@ -155,12 +155,12 @@ class CameraColorApp(App):
         )
 
         # Canbus task(s)
-        # self.tasks.append(
-        #     asyncio.ensure_future(self.stream_canbus(canbus_client))
-        # )
-        # self.tasks.append(
-        #     asyncio.ensure_future(self.send_can_msgs(canbus_client))
-        # )
+        self.tasks.append(
+            asyncio.ensure_future(self.stream_canbus(canbus_client))
+        )
+        self.tasks.append(
+            asyncio.ensure_future(self.send_can_msgs(canbus_client))
+        )
 
 
         return await asyncio.gather(run_wrapper(), *self.tasks)
@@ -409,23 +409,10 @@ class CameraColorApp(App):
             await asyncio.sleep(0.01)
 
         #-------RGBs-------#
-        # for index, device in enumerate(self.oaks.devices):
-        #     stream = device.getOutputQueue(name = "video", maxSize = 12, blocking = False)
-
-            # self.oak.iter()
-        
-        # rgb_imgs = []
-        # for index, oak in enumerate(self.oaks):
-        
-            
-        # if self.oak.video.has():
-        #     rgb_img = self.oak.video.get().getCvFrame()
-            
-        # else:
-        #     rgb_img = 20 * np.ones(shape=[800, 1000, 3], dtype=np.uint8)
         for index, stream in enumerate(self.streams):
             if  stream.has():
-                rgb_img = (stream.get()).getCvFrame()
+                frame = stream.get()
+                rgb_img = (frame).getCvFrame()
                 
                 texture = Texture.create(
                     size=(rgb_img.shape[1], rgb_img.shape[0]), icolorfmt="bgr"
@@ -448,7 +435,7 @@ class CameraColorApp(App):
         
         #-------Data-------#
         data_img = 20 * np.ones(shape=[800, 1000, 3], dtype=np.uint8)
-        # cv2.putText(data_img, str(self.oaks.streams[0].has()), (30,150),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+        cv2.putText(data_img, str(self.streams[0].get()), (30,150),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
 
         texture = Texture.create(
