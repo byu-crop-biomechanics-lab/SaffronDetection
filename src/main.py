@@ -366,7 +366,25 @@ class CameraColorApp(App):
         except Exception as e:
             print(e)
                 
-        rgb_img = self.oaks.qRgbMap
+        rgb_imgs = []
+        qRgbMap = self.oaks.qRgbMap
+        for q_rgb, stream_name in qRgbMap:
+            if q_rgb.has():
+                rgb_imgs = q_rgb.get().getCvFrame()
+                
+        texture = Texture.create(
+            size=(rgb_imgs[0].shape[1], rgb_imgs[0].shape[0]), icolorfmt="bgr"
+        )
+        
+        texture.flip_vertical()
+        texture.blit_buffer(
+            rgb_imgs[0].tobytes(),
+            colorfmt="bgr",
+            bufferfmt="ubyte",
+            mipmap_generation=False,
+        )
+        
+        self.root.ids["rgb"].texture = texture
         
         data_img = 20 * np.ones(shape=[800, 1500, 3], dtype=np.uint8)
         cv2.putText(data_img, str(deviceInfos), (30,150),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
