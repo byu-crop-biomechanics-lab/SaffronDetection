@@ -366,19 +366,19 @@ class CameraColorApp(App):
         except Exception as e:
             print(e)
                 
-    
+        rgb_img = self.oak_1.qRgbMap
         
-        img = 20 * np.ones(shape=[800, 1500, 3], dtype=np.uint8)
-        cv2.putText(img, str(deviceInfos), (30,150),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+        data_img = 20 * np.ones(shape=[800, 1500, 3], dtype=np.uint8)
+        cv2.putText(data_img, str(deviceInfos), (30,150),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
 
         texture = Texture.create(
-            size=(img.shape[1], img.shape[0]), icolorfmt="bgr"
+            size=(data_img.shape[1], data_img.shape[0]), icolorfmt="bgr"
         )
         
         texture.flip_vertical()
         texture.blit_buffer(
-            img.tobytes(),
+            data_img.tobytes(),
             colorfmt="bgr",
             bufferfmt="ubyte",
             mipmap_generation=False,
