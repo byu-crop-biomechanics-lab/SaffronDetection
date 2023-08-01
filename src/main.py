@@ -362,6 +362,27 @@ class CameraColorApp(App):
         while self.root is None:
             await asyncio.sleep(0.01)
             
+            
+        #-------Data-------#
+        data_img = 20 * np.ones(shape=[800, 1500, 3], dtype=np.uint8)
+        if rgb_img:
+            cv2.putText(data_img, str(rgb_img), (30,150),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+
+
+        texture = Texture.create(
+            size=(data_img.shape[1], data_img.shape[0]), icolorfmt="bgr"
+        )
+        
+        texture.flip_vertical()
+        texture.blit_buffer(
+            data_img.tobytes(),
+            colorfmt="bgr",
+            bufferfmt="ubyte",
+            mipmap_generation=False,
+        )
+        
+        self.root.ids["data"].texture = texture
+        
         #-------RGBs-------#
         self.oaks.iter()
         
@@ -387,24 +408,6 @@ class CameraColorApp(App):
         
         #-------depths-------#
         
-        #-------Data-------#
-        data_img = 20 * np.ones(shape=[800, 1500, 3], dtype=np.uint8)
-        cv2.putText(data_img, str(rgb_img), (30,150),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
-
-
-        texture = Texture.create(
-            size=(data_img.shape[1], data_img.shape[0]), icolorfmt="bgr"
-        )
-        
-        texture.flip_vertical()
-        texture.blit_buffer(
-            data_img.tobytes(),
-            colorfmt="bgr",
-            bufferfmt="ubyte",
-            mipmap_generation=False,
-        )
-        
-        self.root.ids["data"].texture = texture
         
         # img = self.oaks.devices[0].q_rgb.get().getCvFrame()
         
