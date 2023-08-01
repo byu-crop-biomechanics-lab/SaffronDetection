@@ -366,8 +366,8 @@ class CameraColorApp(App):
             await asyncio.sleep(0.01)
         # streams = []
         #-------RGBs-------#
-        for index, device in enumerate(self.oaks.devices):
-            stream = device.getOutputQueue(name = "video", maxSize = 12, blocking = False)
+        # for index, device in enumerate(self.oaks.devices):
+        #     stream = device.getOutputQueue(name = "video", maxSize = 12, blocking = False)
 
             # self.oak.iter()
         
@@ -380,25 +380,25 @@ class CameraColorApp(App):
             
         # else:
         #     rgb_img = 20 * np.ones(shape=[800, 1000, 3], dtype=np.uint8)
-            if stream.has():
-                frame = stream.get()
-                rgb_img = frame.getCvFrame()
-                
-                texture = Texture.create(
-                    size=(rgb_img.shape[1], rgb_img.shape[0]), icolorfmt="bgr"
-                )
+        frames = self.oaks.frames()
+        for index, frame in enumerate(frames):
+            rgb_img = frame.getCvFrame()
             
-                texture.flip_vertical()
-                texture.blit_buffer(
-                    rgb_img.tobytes(),
-                    colorfmt="bgr",
-                    bufferfmt="ubyte",
-                    mipmap_generation=False,
-                )
-                
+            texture = Texture.create(
+                size=(rgb_img.shape[1], rgb_img.shape[0]), icolorfmt="bgr"
+            )
+        
+            texture.flip_vertical()
+            texture.blit_buffer(
+                rgb_img.tobytes(),
+                colorfmt="bgr",
+                bufferfmt="ubyte",
+                mipmap_generation=False,
+            )
             
-                # index = 0
-                self.root.ids[("rgb_" + str(index + 1))].texture = texture
+        
+            # index = 0
+            self.root.ids[("rgb_" + str(index + 1))].texture = texture
         
         
         #-------depths-------#
