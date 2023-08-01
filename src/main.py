@@ -354,12 +354,20 @@ class CameraColorApp(App):
                     
     async def stream_Oak(self):
         
-        # deviceInfos = dai.Device.getAllAvailableDevices()
         while self.root is None:
             await asyncio.sleep(0.01)
             
-        img = 20 * np.ones(shape=[800, 1500, 3], dtype=np.uint8)
+        try:
+            deviceInfos = dai.Device.getAllAvailableDevices()
+        except Exception as e:
+            print(e)
+                
+    
         
+        img = 20 * np.ones(shape=[800, 1500, 3], dtype=np.uint8)
+        cv2.putText(img, deviceInfos, (30,150),cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+
+
         texture = Texture.create(
             size=(img.shape[1], img.shape[0]), icolorfmt="bgr"
         )
