@@ -24,7 +24,6 @@ def createPipeline():
     camRgb.setBoardSocket(dai.CameraBoardSocket.CAM_A)
     camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_1080_P)
     camRgb.setVideoSize(1920, 1080)
-    # camRgb.setInterleaved(False)
 
     # Create output
     xoutRgb.input.setBlocking(False)
@@ -78,6 +77,35 @@ class Oak_system:
             if stream.has():
                 stream.get()
                 
+class Oak:
+    def __init__(self, ip):
+        # Create pipeline
+        pipeline = dai.Pipeline()
 
-            
+        # Define source and output
+        camRgb = pipeline.create(dai.node.ColorCamera)
+        xoutVideo = pipeline.create(dai.node.XLinkOut)
+
+        xoutVideo.setStreamName("video")
+
+        # Properties
+        camRgb.setBoardSocket(dai.CameraBoardSocket.CAM_A)
+        camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_1080_P)
+        camRgb.setVideoSize(1920, 1080)
+
+        xoutVideo.input.setBlocking(False)
+        xoutVideo.input.setQueueSize(1)
+
+        # Linking
+        camRgb.video.link(xoutVideo.input)
         
+        device_info = dai.DeviceInfo(ip)
+        
+        with dai.Device(pipeline, device_info) as device:
+            self.video = device.getOutputQueue(name="video", maxSize=1, blocking=False)
+            
+    def iter(self):
+        
+        if self.video.has():
+            videoIn = self.video.get()
+            self.frame = videoIn.getCvFrame()

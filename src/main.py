@@ -31,6 +31,7 @@ from farm_ng.service.service_client import ClientConfig
 import turbojpeg
 # from OAK import Oak
 from OAK import Oak_system
+from OAK import Oak
 import depthai as dai
 
 # things I've added #
@@ -114,8 +115,8 @@ class CameraColorApp(App):
         # )
         # camera_client: OakCameraClient = OakCameraClient(camera_config)
         self.oaks = Oak_system()
-        self.oak_1 = self.oaks.devices[0]
-        self.oak_2 = self.oaks.devices[1]
+        # self.oak_1 = self.oaks.devices[0]
+        # self.oak_2 = self.oaks.devices[1]
 
         # configure the canbus client
         canbus_config: ClientConfig = ClientConfig(
