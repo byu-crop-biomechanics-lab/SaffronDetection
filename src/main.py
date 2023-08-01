@@ -114,6 +114,8 @@ class CameraColorApp(App):
         # )
         # camera_client: OakCameraClient = OakCameraClient(camera_config)
         self.oaks = Oak_system()
+        self.oak_1 = self.oaks.devices[0]
+        self.oak_2 = self.oaks.devices[1]
 
         # configure the canbus client
         canbus_config: ClientConfig = ClientConfig(
@@ -384,7 +386,7 @@ class CameraColorApp(App):
         
         self.root.ids["data"].texture = texture
         
-        self.qRgbMap = self.oaks.iter()
+        # img = self.oaks.devices[0].q_rgb.get().getCvFrame()
         
                     
                     

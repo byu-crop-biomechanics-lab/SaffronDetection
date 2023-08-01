@@ -68,17 +68,17 @@ class Oak_system:
     def __init__(self):
         
         with contextlib.ExitStack() as stack:
-            deviceInfos = dai.Device.getAllAvailableDevices()
+            self.deviceInfos = dai.Device.getAllAvailableDevices()
             usbSpeed = dai.UsbSpeed.SUPER
             openVinoVersion = dai.OpenVINO.Version.VERSION_2021_4
             
-            qRgbMap = []
-            devices = []
+            self.qRgbMap = []
+            self.devices = []
             
-        for deviceInfo in deviceInfos:
+        for deviceInfo in self.deviceInfos:
             deviceInfo: dai.DeviceInfo
             device: dai.Device = stack.enter_context(dai.Device(openVinoVersion, deviceInfo, usbSpeed))
-            devices.append(device)
+            self.devices.append(device)
             print("===Connected to ", deviceInfo.getMxId())
             mxId = device.getMxId()
             cameras = device.getConnectedCameras()
@@ -98,11 +98,7 @@ class Oak_system:
             # Output queue will be used to get the rgb frames from the output defined above
             q_rgb = device.getOutputQueue(name="rgb", maxSize=4, blocking=False)
             stream_name = "rgb-" + mxId + "-" + eepromData.productName
-            qRgbMap.append((q_rgb, stream_name))
+            self.qRgbMap.append((q_rgb, stream_name))
             
-    def iter(self):
-    
-        return self.qRgbMap
-            # if q_rgb.has():
-            #     cv2.imshow(stream_name, q_rgb.get().getCvFrame())
+            
         
