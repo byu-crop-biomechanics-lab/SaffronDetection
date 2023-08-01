@@ -367,7 +367,7 @@ class CameraColorApp(App):
         # streams = []
         #-------RGBs-------#
         for index, device in enumerate(self.oaks.devices):
-            stream = device.getOutputQueue(name = "video", maxSize = 1, blocking = False)
+            stream = device.getOutputQueue(name = "video", maxSize = 12, blocking = False)
 
             # self.oak.iter()
         

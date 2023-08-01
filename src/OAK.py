@@ -29,7 +29,7 @@ def createPipeline():
     xoutRgb.input.setBlocking(False)
     xoutRgb.input.setQueueSize(12)
     
-    camRgb.video.link(xoutRgb.input)
+    camRgb.isp.link(xoutRgb.input)
 
     return pipeline
 
