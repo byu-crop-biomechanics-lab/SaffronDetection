@@ -114,7 +114,7 @@ class Oak:
         
         # device_info.state = dai.X_LINK_BOOTED
         
-        with dai.Device(pipeline, device_info) as device:
+        with dai.Device(pipeline= pipeline, deviceInfo= device_info, maxUsbSpeed= dai.UsbSpeed.SUPER) as device:
             
             self.video = device.getOutputQueue(name="rgb", maxSize=1, blocking=False)
             
