@@ -83,9 +83,6 @@ class Oak_system:
             frame = None
         return frame
                 
-        
-        
-        
                 
 class Oak:
     def __init__(self, ip):
@@ -108,7 +105,7 @@ class Oak:
         # camRgb.setFps(30)
 
         # Linking
-        camRgb.video.link(xoutVideo.input)
+        camRgb.preview.link(xoutVideo.input)
         
         device_info = dai.DeviceInfo(ip)
         
