@@ -185,23 +185,22 @@ class CameraColorApp(App):
         
         #-------RGBs-------#
         
-        if self.oak.frame != None:
-            rgb_img = self.oak.frame
-            texture = Texture.create(
-                size=(rgb_img.shape[1], rgb_img.shape[0]), icolorfmt="bgr"
-            )
+        rgb_img = self.oak.frame
+        texture = Texture.create(
+            size=(rgb_img.shape[1], rgb_img.shape[0]), icolorfmt="bgr"
+        )
+    
+        texture.flip_vertical()
+        texture.blit_buffer(
+            rgb_img.tobytes(),
+            colorfmt="bgr",
+            bufferfmt="ubyte",
+            mipmap_generation=False,
+        )
         
-            texture.flip_vertical()
-            texture.blit_buffer(
-                rgb_img.tobytes(),
-                colorfmt="bgr",
-                bufferfmt="ubyte",
-                mipmap_generation=False,
-            )
-            
-        
-            index = 0
-            self.root.ids[("rgb_" + str(index + 1))].texture = texture
+    
+        index = 0
+        self.root.ids[("rgb_" + str(index + 1))].texture = texture
         
         
         #-------depths-------#
