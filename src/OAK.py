@@ -96,7 +96,7 @@ class Oak:
         # Xout Properties
         xoutVideo.setStreamName("rgb")
         xoutVideo.input.setBlocking(False)
-        xoutVideo.input.setQueueSize(1)
+        xoutVideo.input.setQueueSize(30)
 
         # Cam Rgb Properties
         camRgb.setBoardSocket(dai.CameraBoardSocket.CAM_A)
@@ -105,7 +105,7 @@ class Oak:
         # camRgb.setFps(30)
 
         # Linking
-        camRgb.preview.link(xoutVideo.input)
+        camRgb.video.link(xoutVideo.input)
         
         device_info = dai.DeviceInfo(ip)
         
