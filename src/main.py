@@ -18,14 +18,8 @@ import grpc
 # canbus things
 from farm_ng.canbus import canbus_pb2
 from farm_ng.canbus.canbus_client import CanbusClient
-from farm_ng.canbus.packet import AmigaControlState
-from farm_ng.canbus.packet import AmigaTpdo1
-from farm_ng.canbus.packet import make_amiga_rpdo1_proto
-from farm_ng.canbus.packet import parse_amiga_tpdo1_proto
 
 # camera things
-# from farm_ng.oak import oak_pb2
-# from farm_ng.oak.camera_client import OakCameraClient
 from farm_ng.service import service_pb2
 from farm_ng.service.service_client import ClientConfig
 import turbojpeg
@@ -73,11 +67,6 @@ class CameraColorApp(App):
         self.canbus_port: int = canbus_port
         self.stream_every_n = stream_every_n
         
-        self.amiga_rpdo1: AmigaTpdo1 = AmigaTpdo1()
-        self.amiga_state = AmigaControlState.STATE_AUTO_READY
-        self.amiga_rate = 0
-        self.amiga_speed = 0
-        
         self.gantry_tpdo1: GantryTpdo1 = GantryTpdo1()
         self.gantry_rpdo1: GantryRpdo1 = GantryRpdo1()
         self.gantry_state = GantryControlState.STATE_AUTO_READY
@@ -85,10 +74,8 @@ class CameraColorApp(App):
         self.gantry_y = 0
         self.gantry_feed = 1000
         self.gantry_jog = 1
-        self.sender = 0
-        self.receiver = 0
 
-        self.image_decoder = turbojpeg.TurboJPEG()
+        # self.image_decoder = turbojpeg.TurboJPEG()
         
         self.tasks: List[asyncio.Task] = []
 
@@ -98,11 +85,6 @@ class CameraColorApp(App):
     def on_exit_btn(self) -> None:
         """Kills the running kivy application."""
         App.get_running_app().stop()
-        
-    # def on_home_btn(self) -> None:
-    #     # home the gantry
-    #     # maybe a variable to say home, Go1, jog, or alarm states
-    #     pass
 
     async def app_func(self):
         async def run_wrapper():
@@ -112,31 +94,9 @@ class CameraColorApp(App):
             for task in self.tasks:
                 task.cancel()
 
-        # # configure the camera client
-        # camera_config: ClientConfig = ClientConfig(
-        #     address=self.address, port=self.camera_port
-        # )
-        # camera_client: OakCameraClient = OakCameraClient(camera_config)
-        # self.oaks = Oak_system()
-        with contextlib.ExitStack() as stack:
-            self.deviceInfos = dai.Device.getAllAvailableDevices()
-            # usbSpeed = dai.UsbSpeed.SUPER
-            openVinoVersion = dai.OpenVINO.Version.VERSION_2021_4
-            
-            self.streams = []
-            self.devices = []
-            
-        for deviceInfo in self.deviceInfos:
-            deviceInfo: dai.DeviceInfo
-            device: dai.Device = stack.enter_context(dai.Device(openVinoVersion, deviceInfo))
-            self.devices.append(device)
-            print("===Connected to ", deviceInfo.getMxId())
-            pipeline = self.createPipeline()
-            device.startPipeline(pipeline)
-            self.streams.append( device.getOutputQueue(name = "video", maxSize = 12, blocking = False) )
-
+        # # configure the camera
         # self.oaks = [Oak("10.95.76.10"), Oak("10.95.76.11")]
-        # self.oak = Oak("10.95.76.11")
+        self.oak = Oak("10.95.76.11")
         # self.oak_1 = self.oaks.devices[0]
         # self.oak_2 = self.oaks.devices[1]
 
@@ -146,10 +106,7 @@ class CameraColorApp(App):
         )
         canbus_client: CanbusClient = CanbusClient(canbus_config)
 
-        # # Camera task(s)
-        # self.tasks.append(
-        #     asyncio.ensure_future(self.stream_camera(camera_client))
-        # )
+        # Camera task(s)
         self.tasks.append(
             asyncio.ensure_future(self.stream_Oak())
         )
@@ -170,8 +127,8 @@ class CameraColorApp(App):
         """This task:
 
         - listens to the canbus client's stream
-        - filters for AmigaTpdo1 messages
-        - extracts useful values from AmigaTpdo1 messages
+        - filters for Tpdo1 messages
+        - extracts useful values from Tpdo1 messages
         """
         while self.root is None:
             await asyncio.sleep(0.01)
@@ -218,224 +175,40 @@ class CameraColorApp(App):
                     # Store the value for possible other uses
                     self.gantry_rpdo1 = gantry_rpdo1
                     # print("Received some RPDO1")
-    
-    #---------depthAI stuff goes here--------#         
-    # async def stream_camera(self, client: OakCameraClient) -> None:
-    #     """This task listens to the camera client's stream and populates the tabbed panel with all 4 image streams
-    #     from the oak camera."""
-    #     while self.root is None:
-    #         await asyncio.sleep(0.01)
-
-    #     response_stream = None
-
-    #     while True:
-    #         # check the state of the service
-    #         state = await client.get_state()
-
-    #         if state.value not in [
-    #             service_pb2.ServiceState.IDLE,
-    #             service_pb2.ServiceState.RUNNING,
-    #         ]:
-    #             # Cancel existing stream, if it exists
-    #             if response_stream is not None:
-    #                 response_stream.cancel()
-    #                 response_stream = None
-    #             print("Camera service is not streaming or ready to stream")
-    #             await asyncio.sleep(0.1)
-    #             continue
-
-    #         # Create the stream
-    #         if response_stream is None:
-    #             response_stream = client.stream_frames(every_n=self.stream_every_n)
-
-    #         try:
-    #             # try/except so app doesn't crash on killed service
-    #             response: oak_pb2.StreamFramesReply = await response_stream.read()
-    #             assert response and response != grpc.aio.EOF, "End of stream"
-    #         except Exception as e:
-    #             print(e)
-    #             response_stream.cancel()
-    #             response_stream = None
-    #             continue
-
-    #         # get the sync frame
-    #         frame: oak_pb2.OakSyncFrame = response.frame
-
-
-    #         #--------Code added here--------#
-            
-            
-    #         # get image and show
-    #         for view_name in ["data", "rgb", "disparity", "left", "right"]:
-    #             # Skip if view_name was not included in frame
-    #             try:
-    #                 # Decode the image and render it in the correct kivy texture
-                    
-    #                 # Data was added by me to show us debugging and useful information
-    #                 if view_name == "data":
-                        
-    #                     img = self.image_decoder.decode(
-    #                         getattr(frame, 'rgb').image_data
-    #                     )
-    #                     img[:][:][:] = 0
-                        
-    #                     imu_packet = getattr(frame, 'imu_packets').packets[0]
-                        
-    #                     imu_x = imu_packet.gyro_packet.gyro.x
-    #                     imu_y = imu_packet.gyro_packet.gyro.y
-    #                     imu_z = imu_packet.gyro_packet.gyro.z
-                                                
-    #                     acc_x = imu_packet.accelero_packet.accelero.x
-    #                     acc_y = imu_packet.accelero_packet.accelero.y
-    #                     acc_z = imu_packet.accelero_packet.accelero.z
-                        
-    #                     cv2.putText(img, "IMU packet things:",(30,200),cv2.FONT_HERSHEY_SIMPLEX,1.5,(255,255,255),2)
-    #                     cv2.putText(img, 'G X: %.4s' % str(imu_x),(350,250),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
-    #                     cv2.putText(img, 'G Y: %.4s' % str(imu_y),(350,300),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
-    #                     cv2.putText(img, 'G Z: %.4s' % str(imu_z),(350,350),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
-                        
-    #                     cv2.putText(img, 'A X: %.4s' % str(acc_x),(30,250),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
-    #                     cv2.putText(img, 'A Y: %.4s' % str(acc_y),(30,300),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
-    #                     cv2.putText(img, 'A Z: %.4s' % str(acc_z),(30,350),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
-                        
-    #                     cv2.putText(img, 'Gantry things',(600,200),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
-    #                     cv2.putText(img, 'X: %.4s' %str(self.gantry_x),(600,250),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
-    #                     cv2.putText(img, 'Y: %.4s' %str(self.gantry_y),(600,300),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
-                        
-                        
-    #                     meta_data = getattr(frame, 'rgb').meta.category
-    #                     cv2.putText(img, 'meta: %.4s' %str(meta_data),(30,600),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)                        
-                        
-                        
-    #                 # color filtering based on hue
-    #                 elif view_name == 'rgb':
-    #                     img = self.image_decoder.decode(
-    #                         getattr(frame, view_name).image_data
-    #                     )                                                
-    #                     img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-
-    #                     purple_lower = np.array([120,70,50])
-    #                     purple_upper = np.array([135,255,255])
-    #                     purple_amount = 400
-    #                     purple_full_mask = cv2.inRange(img, purple_lower, purple_upper)
-    #                     rgb_size = (img.shape[1],img.shape[0])                        
-                        
-    #                     # calculate center of purple object
-    #                     cX = None
-    #                     cY = None
-    #                     if np.count_nonzero(purple_full_mask) >= purple_amount:
-    #                         ret,thresh = cv2.threshold(purple_full_mask,127,255,0)
-        
-    #                         M = cv2.moments(thresh)
-                            
-    #                         cX = int(M["m10"] / M["m00"])
-    #                         cY = int(M["m01"] / M["m00"])
-                        
-    #                     img = cv2.bitwise_and(img, img, mask=purple_full_mask)
-    #                     img = cv2.cvtColor(img,cv2.COLOR_HSV2BGR) 
-                        
-    #                     # put text and highlight the center
-    #                     if cX and cY:
-    #                         cv2.circle(img, (cX, cY), 5, (255, 255, 255), -1)
-    #                         # text = "centroid: " + str(cX) + " " + str(cY)
-    #                         # cv2.putText(img, text, (cX - 25, cY - 25),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
-                        
-    #                     disparity_img = self.image_decoder.decode(
-    #                         getattr(frame, "disparity").image_data
-    #                     )
-    #                     disparity_img = cv2.resize(disparity_img,(img.shape[1], img.shape[0]))
-                        
-    #                     '''
-    #                     # this is to show what the disparity image shows us at the location of the pom pom
-    #                     if cX and cY:
-
-    #                         cv2.circle(img, (cX, cY), 5, (255, 255, 255), -1)
-    #                         text = "Center: " + str(disparity_img[cX][cY])
-    #                         cv2.putText(img, text, (cX - 25, cY - 25),cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
-    #                     '''
-
-    #                 else:
-    #                     img = self.image_decoder.decode(
-    #                         getattr(frame, view_name).image_data
-    #                     )
-
-
-    #                 #----------end of my custom code----------#
-                    
-                    
-    #                 texture = Texture.create(
-    #                     size=(img.shape[1], img.shape[0]), icolorfmt="bgr"
-    #                 )
-    #                 texture.flip_vertical()
-    #                 texture.blit_buffer(
-    #                     img.tobytes(),
-    #                     colorfmt="bgr",
-    #                     bufferfmt="ubyte",
-    #                     mipmap_generation=False,
-    #                 )
-                    
-    #                 self.root.ids[view_name].texture = texture
-
-    #             except Exception as e:
-    #                 print(e)
-                      
-    def createPipeline(self):
-        # Start defining a pipeline
-        pipeline = dai.Pipeline()
-        
-        # Define a source - color camera
-        camRgb = pipeline.create(dai.node.ColorCamera)
-        xoutRgb = pipeline.create(dai.node.XLinkOut)
-        
-        xoutRgb.setStreamName("video")
-
-        # Properties
-        camRgb.setBoardSocket(dai.CameraBoardSocket.CAM_A)
-        camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_1080_P)
-        camRgb.setVideoSize(1920, 1080)
-        # camRgb.setFps(1)
-
-        # Create output
-        # xoutRgb.input.setBlocking(False)
-        # xoutRgb.input.setQueueSize(30)
-        
-        camRgb.video.link(xoutRgb.input)
-
-        return pipeline
 
     async def stream_Oak(self):
         
         while self.root is None:
             await asyncio.sleep(0.01)
 
+        self.oak.iter()
+        
         #-------RGBs-------#
-        for index, stream in enumerate(self.streams):
-            if  stream.has():
-                frame = stream.get()
-                rgb_img = (frame).getCvFrame()
-                cv2.imshow("video", rgb_img)
-                texture = Texture.create(
-                    size=(rgb_img.shape[1], rgb_img.shape[0]), icolorfmt="bgr"
-                )
+        
+        if self.oak.frame != None:
+            rgb_img = self.oak.frame
+            texture = Texture.create(
+                size=(rgb_img.shape[1], rgb_img.shape[0]), icolorfmt="bgr"
+            )
+        
+            texture.flip_vertical()
+            texture.blit_buffer(
+                rgb_img.tobytes(),
+                colorfmt="bgr",
+                bufferfmt="ubyte",
+                mipmap_generation=False,
+            )
             
-                texture.flip_vertical()
-                texture.blit_buffer(
-                    rgb_img.tobytes(),
-                    colorfmt="bgr",
-                    bufferfmt="ubyte",
-                    mipmap_generation=False,
-                )
-                
-            
-                # index = 0
-                # self.root.ids[("rgb_" + str(index + 1))].texture = texture
+        
+            index = 0
+            self.root.ids[("rgb_" + str(index + 1))].texture = texture
         
         
         #-------depths-------#
         
         #-------Data-------#
         data_img = 20 * np.ones(shape=[800, 1000, 3], dtype=np.uint8)
-        # cv2.putText(data_img, str(self.streams[0].get().getCvFrame()), (30,150),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+        cv2.putText(data_img, str(self.oak.has()), (30,150),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
 
         texture = Texture.create(
@@ -450,7 +223,7 @@ class CameraColorApp(App):
             mipmap_generation=False,
         )
         
-        # self.root.ids["data"].texture = texture
+        self.root.ids["data"].texture = texture
         
         # img = self.oaks.devices[0].q_rgb.get().getCvFrame()
         
@@ -514,8 +287,7 @@ class CameraColorApp(App):
             )
             # print("Sent TPDO")
             yield canbus_pb2.SendCanbusMessageRequest(message=msg)
-            await asyncio.sleep(period)
-            
+            await asyncio.sleep(period)          
     
             
 if __name__ == "__main__":
@@ -523,21 +295,12 @@ if __name__ == "__main__":
     parser.add_argument(
         "--address", type=str, default="localhost", help="The server address"
     )
-    # parser.add_argument(
-    #     "--camera-port",
-    #     type=int,
-    #     required=True,
-    #     help="The grpc port where the camera service is running.",
-    # )
     parser.add_argument(
         "--canbus-port",
         type=int,
         required=True,
         help="The grpc port where the canbus service is running.",
     )    
-    # parser.add_argument(
-    #     "--address", type=str, default="localhost", help="The camera address"
-    # )
     parser.add_argument(
         "--stream-every-n", 
         type=int, 
